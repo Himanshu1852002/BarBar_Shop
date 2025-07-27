@@ -33,7 +33,7 @@ const Navbar = () => {
         </ul>
 
         <div className="hidden md:block">
-          <button className="bg-[#cf814d] text-white border border-white py-1 px-4 hover:shadow-[0_0_25px_#cf814d] transition duration-400 cursor-pointer tracking-wider">
+          <button className="bg-[#cf814d] text-white border border-white py-1 px-4 hover:shadow-[0_0_25px_#cf814d] transition duration-400 cursor-pointer tracking-widest">
             BOOK NOW
           </button>
         </div>
@@ -59,7 +59,7 @@ const Navbar = () => {
             <li className="py-2 font-medium">Blog</li>
             <li className="py-2 font-medium">Extras</li>
           </ul>
-          <button className="bg-[#cf814d] w-full text-white py-2 tracking-wider">
+          <button className="bg-[#cf814d] w-full text-white py-2 tracking-widest">
             BOOK NOW
           </button>
         </div>
