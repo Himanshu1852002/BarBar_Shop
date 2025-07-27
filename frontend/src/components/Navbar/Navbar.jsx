@@ -8,7 +8,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-black text-white w-full">
-      <div className="flex items-center justify-between px-4 sm:px-8 md:px-10 lg:px-20 py-4">
+      <div className="flex items-center justify-between px-4 sm:px-8 md:px-10 lg:px-20 py-6">
         <div>
           <img
             src={logoDesktop}
