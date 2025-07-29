@@ -3,8 +3,7 @@ import hero_men from "../../assets/hero-men.png"
 
 const Hero = () => {
     return (
-        <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
-
+        <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden pt-20 md:pt-24">
             <div
                 className="absolute top-0 left-0 w-full h-full -z-10 bg-cover bg-center"
                 style={{

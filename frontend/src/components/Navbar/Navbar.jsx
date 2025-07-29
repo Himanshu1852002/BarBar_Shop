@@ -1,13 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import logoDesktop from '../../assets/logo.png';
 import logoMobile from '../../assets/logo-mobile.png';
 import { FiMenu, FiX } from 'react-icons/fi';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+   const [scrolled, setScrolled] = useState(false);
+
+   useEffect(()=>{
+     const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+   })
 
   return (
-    <nav className="bg-black text-white w-full">
+      <nav
+        className={`fixed w-full z-50 transition duration-300 text-white ${
+          scrolled ? 'bg-black' : 'md:bg-transparent bg-black'
+        }`}
+      >
       <div className="flex items-center justify-between px-4 sm:px-8 md:px-10 lg:px-20 py-6">
         <div>
           <img

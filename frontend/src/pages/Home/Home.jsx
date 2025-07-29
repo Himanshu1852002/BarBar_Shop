@@ -6,6 +6,7 @@ import Hero_Bottom from '../../components/Hero-Bottom/Hero_Bottom'
 import TrendingStyles from '../../components/LeadingStyles/TrendingStyles'
 import CenterSection from '../../components/CenterSection/CenterSection'
 import Services from '../../components/Servicess/Services'
+import AddressTime from '../../components/Address & Time/AddressTime'
 
 const Home = () => {
   return (
@@ -17,6 +18,7 @@ const Home = () => {
      <TrendingStyles/>
      <CenterSection/>
      <Services/>
+     <AddressTime/>
      <Footer/>
    </div>
     </>
