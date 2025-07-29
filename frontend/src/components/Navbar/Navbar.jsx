@@ -2,26 +2,29 @@ import { useEffect, useState } from 'react';
 import logoDesktop from '../../assets/logo.png';
 import logoMobile from '../../assets/logo-mobile.png';
 import { FiMenu, FiX } from 'react-icons/fi';
+import { FiChevronDown } from 'react-icons/fi';
+
+import { Link } from 'react-router-dom';
+
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-   const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-   useEffect(()=>{
-     const handleScroll = () => {
+  useEffect(() => {
+    const handleScroll = () => {
       setScrolled(window.scrollY > 10);
     };
     window.addEventListener('scroll', handleScroll);
-    
+
     return () => window.removeEventListener('scroll', handleScroll);
-   })
+  })
 
   return (
-      <nav
-        className={`fixed w-full z-50 transition duration-300 text-white ${
-          scrolled ? 'bg-black' : 'md:bg-transparent bg-black'
+    <nav
+      className={`fixed w-full z-50 transition duration-300 text-white ${scrolled ? 'bg-black' : 'md:bg-transparent bg-black'
         }`}
-      >
+    >
       <div className="flex items-center justify-between px-4 sm:px-8 md:px-10 lg:px-20 py-6">
         <div>
           <img
@@ -39,7 +42,31 @@ const Navbar = () => {
         {/* Desktop Menu */}
         <ul className="hidden md:flex gap-8 lg:gap-10 items-center text-sm lg:text-base">
           <li className="cursor-pointer font-semibold">Home</li>
-          <li className="cursor-pointer font-semibold">Services</li>
+          <li className="relative group cursor-pointer font-semibold">
+            <div className="flex items-center gap-1">
+              <span>Services</span>
+              <FiChevronDown className="mt-[5px] text-md" />
+            </div>
+
+            <ul className="absolute top-full left-10 bg-black text-white shadow-md rounded-sm opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 w-40 z-50">
+              <li>
+                <Link
+                  to="/services"
+                  className="block px-4 py-2 hover:bg-[#cf814d] transition"
+                >
+                  All Services
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/single-service"
+                  className="block px-4 py-2 hover:bg-[#cf814d] transition"
+                >
+                  Single Service
+                </Link>
+              </li>
+            </ul>
+          </li>
           <li className="cursor-pointer font-semibold">About</li>
           <li className="cursor-pointer font-semibold">Book Now</li>
           <li className="cursor-pointer font-semibold">Blog</li>
