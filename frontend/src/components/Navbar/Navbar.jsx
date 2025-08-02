@@ -41,7 +41,14 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex gap-8 lg:gap-10 items-center text-sm lg:text-base">
-          <li className="cursor-pointer font-semibold">Home</li>
+          <li className="cursor-pointer font-semibold">
+            <Link
+                  to="/"
+                  className="block px-4 py-2"
+                >
+                  Home
+                </Link>
+          </li>
           <li className="relative group cursor-pointer font-semibold">
             <div className="flex items-center gap-1">
               <span>Services</span>
@@ -67,10 +74,67 @@ const Navbar = () => {
               </li>
             </ul>
           </li>
-          <li className="cursor-pointer font-semibold">About</li>
+
+          <li className="relative group cursor-pointer font-semibold">
+            <div className="flex items-center gap-1">
+              <span>About</span>
+              <FiChevronDown className="mt-[5px] text-md" />
+            </div>
+
+            <ul className="absolute top-full left-10 bg-black text-white shadow-md rounded-sm opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 w-40 z-50">
+              <li>
+                <Link
+                  to="/aboutus"
+                  className="block px-4 py-2 hover:bg-[#cf814d] transition"
+                >
+                  About us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/team"
+                  className="block px-4 py-2 hover:bg-[#cf814d] transition"
+                >
+                  Our Team
+                </Link>
+              </li>
+            </ul>
+          </li>
           <li className="cursor-pointer font-semibold">Book Now</li>
           <li className="cursor-pointer font-semibold">Blog</li>
-          <li className="cursor-pointer font-semibold">Extras</li>
+          <li className="relative group cursor-pointer font-semibold">
+            <div className="flex items-center gap-1">
+              <span>Extras</span>
+              <FiChevronDown className="mt-[5px] text-md" />
+            </div>
+
+            <ul className="absolute top-full left-10 bg-black text-white shadow-md rounded-sm opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 w-40 z-50">
+              <li>
+                <Link
+                  to="/contactus"
+                  className="block px-4 py-2 hover:bg-[#cf814d] transition"
+                >
+                  Contact us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/team"
+                  className="block px-4 py-2 hover:bg-[#cf814d] transition"
+                >
+                  Gallery
+                </Link>
+              </li>
+               <li>
+                <Link
+                  to="/team"
+                  className="block px-4 py-2 hover:bg-[#cf814d] transition"
+                >
+                  Testimonials
+                </Link>
+              </li>
+            </ul>
+          </li>
         </ul>
 
         <div className="hidden md:block">

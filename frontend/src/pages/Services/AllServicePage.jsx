@@ -3,6 +3,7 @@ import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import Services from '../../components/Servicess/Services';
 import chairImg from '../../assets/chair.jpg';
+import Prices from '../../components/Prices/Prices';
 
 const AllServicePage = () => {
   return (
@@ -33,6 +34,7 @@ const AllServicePage = () => {
           </p>
         </div>
       </section>
+      <Prices/>
 
       <Services />
       <Footer />
