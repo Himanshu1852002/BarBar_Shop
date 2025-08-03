@@ -117,17 +117,17 @@ const Navbar = () => {
                   Contact us
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   to="/team"
                   className="block px-4 py-2 hover:bg-[#cf814d] transition"
                 >
                   Gallery
                 </Link>
-              </li>
+              </li> */}
                <li>
                 <Link
-                  to="/team"
+                  to="/testimonials"
                   className="block px-4 py-2 hover:bg-[#cf814d] transition"
                 >
                   Testimonials

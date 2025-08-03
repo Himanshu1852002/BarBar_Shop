@@ -21,7 +21,7 @@ const AllServicePage = () => {
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-widest uppercase">
             SERVICES
           </h2>
-          <div className="flex items-center justify-center mt-4 gap-2">
+          <div className="flex items-center justify-center mt-4">
             <div className="w-2 md:w-3 h-2 md:h-3 bg-[#cf814d] rotate-45" />
             <div className="h-[2px] w-20 sm:w-36 md:w-44 bg-[#cf814d]" />
             <div className="w-2 md:w-3 h-2 md:h-3 bg-[#cf814d] rotate-45" />

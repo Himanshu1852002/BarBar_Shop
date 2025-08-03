@@ -5,6 +5,7 @@ import AllServicePage from './pages/Services/AllServicePage'
 import Aboutus from './pages/About us/Aboutus'
 import Team from './pages/Team/Team'
 import Contactus from './pages/Contact us/Contactus'
+import Testimonials from './pages/Testimonials/Testimonials'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path='/aboutus' element={<Aboutus />} />
         <Route path='/team' element={<Team />} />
         <Route path='/contactus' element={<Contactus />} />
+        <Route path='/testimonials' element={<Testimonials/>}/>
       </Routes>
     </>
   )
