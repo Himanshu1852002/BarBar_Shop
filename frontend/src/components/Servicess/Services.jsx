@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import service1 from '../../assets/services1.jpg';
 import service2 from '../../assets/services2.jpg';
 import service3 from '../../assets/services3.jpg';
@@ -10,7 +11,7 @@ const services = [
     { title: 'Razor Blade', img: service4 },
 ];
 
-const Services = () => {
+const Services = ({ showButton = true }) => {
     return (
         <section className="py-20 bg-black">
             <div className="text-center mb-16">
@@ -45,9 +46,13 @@ const Services = () => {
                 ))}
 
             </div>
-            <div className='flex justify-center items-center mt-10'>
+            {showButton && (
+                <div className='flex justify-center items-center mt-10'>
+               <Link to='/services'>
                 <button className="bg-[#cf814d] text-white border font-semibold border-white py-1 px-4 hover:shadow-[0_0_25px_#cf814d] transition duration-400 cursor-pointer tracking-widest">ALL SERVICES & PRICES</button>
+               </Link>
             </div>
+            )}
         </section>
     );
 };

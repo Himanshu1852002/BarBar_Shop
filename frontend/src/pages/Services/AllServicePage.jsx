@@ -4,6 +4,7 @@ import Footer from '../../components/Footer/Footer';
 import Services from '../../components/Servicess/Services';
 import chairImg from '../../assets/chair.jpg';
 import Prices from '../../components/Prices/Prices';
+import AddressTime from '../../components/Address & Time/AddressTime';
 
 const AllServicePage = () => {
   return (
@@ -36,7 +37,8 @@ const AllServicePage = () => {
       </section>
       <Prices/>
 
-      <Services />
+      <Services showButton={false} />
+      <AddressTime/>
       <Footer />
     </>
   );

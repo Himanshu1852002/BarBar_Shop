@@ -27,6 +27,7 @@ const Navbar = () => {
     >
       <div className="flex items-center justify-between px-4 sm:px-8 md:px-10 lg:px-20 py-6">
         <div>
+          <Link to='/'>
           <img
             src={logoDesktop}
             alt="logo"
@@ -37,6 +38,7 @@ const Navbar = () => {
             alt="mobile logo"
             className="block md:hidden"
           />
+          </Link>
         </div>
         <ul className="hidden md:flex gap-8 lg:gap-10 items-center text-sm lg:text-base">
           <li className="cursor-pointer font-semibold">
@@ -67,7 +69,7 @@ const Navbar = () => {
                   to="/single-service"
                   className="block px-4 py-2 hover:bg-[#cf814d] transition"
                 >
-                  Single Service
+                  Service Single
                 </Link>
               </li>
             </ul>
@@ -141,9 +143,11 @@ const Navbar = () => {
         </ul>
 
         <div className="hidden md:block">
-          <button className="bg-[#cf814d] text-white border border-white py-1 px-4 hover:shadow-[0_0_25px_#cf814d] transition duration-400 cursor-pointer tracking-widest">
-            BOOK NOW
-          </button>
+          <Link to="/booking">
+            <button className="bg-[#cf814d] text-white border border-white py-1 px-4 hover:shadow-[0_0_25px_#cf814d] transition duration-400 cursor-pointer tracking-widest">
+              BOOK NOW
+            </button>
+          </Link> 
         </div>
 
         <div className="md:hidden">
