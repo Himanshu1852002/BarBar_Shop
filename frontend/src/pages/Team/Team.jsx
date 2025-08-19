@@ -4,13 +4,10 @@ import team2 from '../../assets/team2.jpg'
 import team3 from '../../assets/team3.jpg'
 import team4 from '../../assets/team4.jpg'
 import { FaFacebookF, FaTwitter, FaInstagram } from "react-icons/fa";
-import Navbar from '../../components/Navbar/Navbar'
-import Footer from '../../components/Footer/Footer'
 
 const Team = () => {
     return (
         <>
-            <Navbar />
             <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden pt-24 md:pt-28">
                 <div
                     className="absolute inset-0 -z-10 bg-cover bg-center"
@@ -160,7 +157,6 @@ const Team = () => {
                     </div>
                 </div>
             </section>
-            <Footer />
         </>
     )
 }

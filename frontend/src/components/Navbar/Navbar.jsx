@@ -3,11 +3,12 @@ import logoDesktop from '../../assets/logo.png';
 import logoMobile from '../../assets/logo-mobile.png';
 import { FiMenu, FiX } from 'react-icons/fi';
 import { FiChevronDown } from 'react-icons/fi';
+import { FiUser } from "react-icons/fi";
 
 import { Link } from 'react-router-dom';
 
 
-const Navbar = () => {
+const Navbar = ({ onLoginClick }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -28,16 +29,16 @@ const Navbar = () => {
       <div className="flex items-center justify-between px-4 sm:px-8 md:px-10 lg:px-20 py-6">
         <div>
           <Link to='/'>
-          <img
-            src={logoDesktop}
-            alt="logo"
-            className="hidden md:block w-32"
-          />
-          <img
-            src={logoMobile}
-            alt="mobile logo"
-            className="block md:hidden"
-          />
+            <img
+              src={logoDesktop}
+              alt="logo"
+              className="hidden md:block w-32"
+            />
+            <img
+              src={logoMobile}
+              alt="mobile logo"
+              className="block md:hidden"
+            />
           </Link>
         </div>
         <ul className="hidden md:flex gap-8 lg:gap-10 items-center text-sm lg:text-base">
@@ -122,14 +123,6 @@ const Navbar = () => {
                   Contact us
                 </Link>
               </li>
-              {/* <li>
-                <Link
-                  to="/team"
-                  className="block px-4 py-2 hover:bg-[#cf814d] transition"
-                >
-                  Gallery
-                </Link>
-              </li> */}
               <li>
                 <Link
                   to="/testimonials"
@@ -142,15 +135,21 @@ const Navbar = () => {
           </li>
         </ul>
 
-        <div className="hidden md:block">
+        <div className="hidden md:flex items-center gap-4">
           <Link to="/booking">
             <button className="bg-[#cf814d] text-white border border-white py-1 px-4 hover:shadow-[0_0_25px_#cf814d] transition duration-400 cursor-pointer tracking-widest">
               BOOK NOW
             </button>
-          </Link> 
+          </Link>
+          <button onClick={onLoginClick} className="flex items-center border-2 border-white h-9 w-9 bg-[#cf814d] rounded-full justify-center hover:shadow-[0_0_25px_#cf814d] transition duration-400">
+            <FiUser className="w-6 h-6 cursor-pointer text-white transition" />
+          </button>
         </div>
 
-        <div className="md:hidden">
+        <div className="md:hidden flex items-center justify-center gap-4">
+          <button onClick={onLoginClick}>
+            <FiUser className="w-6 h-6 text-white" />
+          </button>
           <button onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? (
               <FiX className="w-7 h-7 text-white" />

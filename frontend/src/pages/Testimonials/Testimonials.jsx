@@ -1,6 +1,4 @@
 import chair_img from '../../assets/chair.jpg'
-import Navbar from '../../components/Navbar/Navbar'
-import Footer from '../../components/Footer/Footer'
 import TestimonialCard from "../../components/TestimonialCard/TestimonialCard";
 import testi_1 from '../../assets/testi_1.jpg';
 import testi_2 from '../../assets/testi_2.jpg';
@@ -48,7 +46,6 @@ const testimonials = [
 const Testimonials = () => {
     return (
         <>
-            <Navbar />
             <section className="relative w-full min-h-130 flex flex-col justify-center items-center overflow-hidden pt-28 md:pt-32">
 
                 <div
@@ -85,7 +82,6 @@ const Testimonials = () => {
                     <button className="bg-[#cf814d] text-white border font-semibold border-white py-1 px-4 hover:shadow-[0_0_25px_#cf814d] transition duration-400 cursor-pointer tracking-widest uppercase">load more testimonials</button>
                 </div>
             </section>
-            <Footer />
         </>
     )
 }

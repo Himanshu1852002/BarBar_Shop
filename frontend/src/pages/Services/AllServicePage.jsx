@@ -1,6 +1,3 @@
-import React from 'react';
-import Navbar from '../../components/Navbar/Navbar';
-import Footer from '../../components/Footer/Footer';
 import Services from '../../components/Servicess/Services';
 import chairImg from '../../assets/chair.jpg';
 import Prices from '../../components/Prices/Prices';
@@ -9,7 +6,6 @@ import AddressTime from '../../components/Address & Time/AddressTime';
 const AllServicePage = () => {
   return (
     <>
-      <Navbar />
       <section className="relative w-full h-full flex flex-col justify-center items-center overflow-hidden pt-30 md:pt-25 lg:px-10">
         <div
           className="absolute top-0 left-0 w-full h-full -z-10 bg-cover bg-center"
@@ -39,7 +35,6 @@ const AllServicePage = () => {
 
       <Services showButton={false} />
       <AddressTime/>
-      <Footer />
     </>
   );
 };

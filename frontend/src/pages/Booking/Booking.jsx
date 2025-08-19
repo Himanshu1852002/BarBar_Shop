@@ -1,5 +1,3 @@
-import Navbar from '../../components/Navbar/Navbar';
-import Footer from '../../components/Footer/Footer';
 import booking_img from '../../assets/book_img.jpg';
 import { useState } from 'react';
 import { FaCalendarAlt } from 'react-icons/fa';
@@ -34,7 +32,6 @@ const Booking = () => {
 
   return (
     <>
-      <Navbar />
       <section className="relative w-full min-h-120 flex flex-col justify-start items-center overflow-hidden pt-40 md:pt-40">
         <div
           className="absolute top-0 left-0 w-full h-full -z-10 bg-cover bg-center"
@@ -157,8 +154,6 @@ const Booking = () => {
           Submit Form
         </button>
       </section>
-
-      <Footer />
     </>
   );
 };

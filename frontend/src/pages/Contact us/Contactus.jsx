@@ -1,7 +1,5 @@
 import contactus_img from '../../assets/contactus.jpg';
 import contact_back from '../../assets/contact_back.jpg'
-import Footer from '../../components/Footer/Footer'
-import Navbar from '../../components/Navbar/Navbar'
 import { FaFacebookF } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa";
 import { FaLinkedinIn } from "react-icons/fa";
@@ -15,7 +13,6 @@ const Contactus = () => {
     const [isChecked, setIsChecked] = useState();
     return (
         <>
-            <Navbar />
             <section className="relative w-full flex flex-col justify-start items-center overflow-hidden pt-40 md:pt-40">
                 <div
                     className="absolute top-0 left-0 w-full h-full -z-10 bg-cover bg-center"
@@ -161,8 +158,6 @@ const Contactus = () => {
                     </li>
                 </ul>
             </section>
-
-            <Footer />
         </>
     )
 }

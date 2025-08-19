@@ -1,4 +1,5 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
+import './TrendingStyle.css'
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
@@ -36,7 +37,7 @@ const TrendingStyles = () => {
         </h2>
         <div className="flex items-center justify-center mt-5">
           <div className="w-2 h-2 bg-[#cf814d] rotate-45"></div>
-          <div className="h-[2px] w-28 sm:w-36 md:w-44 bg-[#cf814d] mx-2"></div>
+          <div className="h-[2px] w-28 sm:w-36 md:w-44 bg-[#cf814d]"></div>
           <div className="w-2 h-2 bg-[#cf814d] rotate-45"></div>
         </div>
       </div>

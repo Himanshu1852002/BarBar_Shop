@@ -1,6 +1,4 @@
 import chairImg from '../../assets/chair.jpg';
-import Navbar from '../../components/Navbar/Navbar';
-import Footer from '../../components/Footer/Footer';
 import hero_men_img from '../../assets/hero-men-bg.png';
 import wallImg from '../../assets/wall2.jpg';
 import style1 from '../../assets/style1.jpg'
@@ -22,7 +20,6 @@ const styles = [
 const ServiceSingle = () => {
   return (
     <>
-      <Navbar />
       <section className="relative w-full h-full flex flex-col justify-center items-center overflow-hidden pt-30 pb-20 md:pt-50 md:pb-40 lg:px-10">
         <div
           className="absolute top-0 left-0 w-full h-full -z-10 bg-cover bg-center"
@@ -113,7 +110,6 @@ const ServiceSingle = () => {
         ))}
       </div>
     </section>
-      <Footer />
     </>
   )
 }
