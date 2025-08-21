@@ -1,8 +1,12 @@
-import { Link } from 'react-router-dom';
 import bg_img from '../../assets/hero-bg.jpg';
-import hero_men from "../../assets/hero-men.png"
+import hero_men from "../../assets/hero-men.png";
+import { useNavigate } from 'react-router-dom';
+import { handleBookNow } from '../../utils/authHelper';
 
-const Hero = () => {
+const Hero = ({ onLoginClick }) => {
+    const navigate = useNavigate();
+
+
     return (
         <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden pt-20 md:pt-24">
             <div
@@ -32,11 +36,13 @@ const Hero = () => {
                         Established with a passion for the art of barbering, we take great pride in
                         our craft and strive to create an atmosphere that feels like home.
                     </p>
-                    <Link to='/booking'>
-                    <button className="mt-6 cursor-pointer bg-[#cf814d] text-text font-semibold py-2 px-6  hover:shadow-[0_0_25px_#cf814d] transition duration-400 tracking-widest">
+
+                    <button onClick={()=>{
+                        handleBookNow(navigate, onLoginClick)
+                    }} className="mt-6 cursor-pointer bg-[#cf814d] text-text font-semibold py-2 px-6  hover:shadow-[0_0_25px_#cf814d] transition duration-400 tracking-widest">
                         BOOK NOW
                     </button>
-                    </Link>
+
                 </div>
             </div>
         </section>

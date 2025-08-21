@@ -5,17 +5,17 @@ import CenterSection from '../../components/CenterSection/CenterSection'
 import Services from '../../components/Servicess/Services'
 import AddressTime from '../../components/Address & Time/AddressTime'
 
-const Home = () => {
+const Home = ({ onLoginClick }) => {
   return (
     <>
-   <div>
-     <Hero/>
-     <Hero_Bottom/>
-     <TrendingStyles/>
-     <CenterSection/>
-     <Services/>
-     <AddressTime/>
-   </div>
+      <div>
+        <Hero onLoginClick={onLoginClick} />
+        <Hero_Bottom />
+        <TrendingStyles />
+        <CenterSection  onLoginClick={onLoginClick}/>
+        <Services />
+        <AddressTime />
+      </div>
     </>
   )
 }

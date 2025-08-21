@@ -33,7 +33,7 @@ function App() {
         <>
           <Navbar onLoginClick={() => setShowAuthModal(true)} />
           <Routes>
-            <Route path='/' element={<Home />} />
+            <Route path='/' element={<Home onLoginClick={() => setShowAuthModal(true)} />} />
             <Route path='/services' element={<AllServicePage />} />
             <Route path='/aboutus' element={<Aboutus />} />
             <Route path='/team' element={<Team />} />

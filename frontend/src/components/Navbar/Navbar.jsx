@@ -3,12 +3,15 @@ import logoDesktop from '../../assets/logo.png';
 import logoMobile from '../../assets/logo-mobile.png';
 import { FiMenu, FiX, FiChevronDown, FiUser } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { handleBookNow } from '../../utils/authHelper';
 
 const Navbar = ({ onLoginClick }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // 🔹 user login state
-  const [showDropdown, setShowDropdown] = useState(false); // 🔹 hover dropdown
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,6 +31,7 @@ const Navbar = ({ onLoginClick }) => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
     setShowDropdown(false);
+    navigate("/");
   };
 
   return (
@@ -86,11 +90,9 @@ const Navbar = ({ onLoginClick }) => {
           </li>
         </ul>
         <div className="hidden md:flex items-center gap-4">
-          <Link to="/booking">
-            <button className="bg-[#cf814d] cursor-pointer rounded-2xl text-white border border-white py-1 px-4 hover:shadow-[0_0_25px_#cf814d] transition tracking-widest">
-              BOOK NOW
-            </button>
-          </Link>
+          <button onClick={() => handleBookNow(navigate, onLoginClick)} className="bg-[#cf814d] cursor-pointer rounded-2xl text-white border border-white py-1 px-4 hover:shadow-[0_0_25px_#cf814d] transition tracking-widest">
+            BOOK NOW
+          </button>
 
           {!isAuthenticated ? (
             <button
@@ -163,7 +165,7 @@ const Navbar = ({ onLoginClick }) => {
             <li className="py-2 font-medium">Blog</li>
             <li className="py-2 font-medium">Extras</li>
           </ul>
-          <button className="bg-[#cf814d] w-full text-white py-2 tracking-widest">
+          <button onClick={() => handleBookNow(navigate, onLoginClick)} className="bg-[#cf814d] w-full text-white py-2 tracking-widest">
             BOOK NOW
           </button>
         </div>

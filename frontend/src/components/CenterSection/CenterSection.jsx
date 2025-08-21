@@ -1,8 +1,10 @@
 import wallImg from '../../assets/wall2.jpg';
 import men2 from '../../assets/man-2.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { handleBookNow } from '../../utils/authHelper';
 
-const CenterSection = () => {
+const CenterSection = ({onLoginClick}) => {
+    const navigate = useNavigate();
     return (
         <section className="relative w-full min-h-screen flex items-center py-10 justify-center overflow-hidden">
             <div
@@ -36,11 +38,11 @@ const CenterSection = () => {
                         dedicated to enhancing your style and confidence.
                     </p>
 
-                   <Link to='/booking'>
-                    <button className="mt-6 cursor-pointer bg-[#cf814d] text-white font-semibold py-2 px-6 hover:shadow-[0_0_25px_#cf814d] transition duration-300 tracking-widest">
+                    <button onClick={()=>{
+                        handleBookNow(navigate, onLoginClick)
+                    }} className="mt-6 cursor-pointer bg-[#cf814d] text-white font-semibold py-2 px-6 hover:shadow-[0_0_25px_#cf814d] transition duration-300 tracking-widest">
                         BOOK NOW
                     </button>
-                   </Link>
                 </div>
 
                 <div className="w-[70%] sm:w-[60%] md:w-[150%] lg:w-[40%]">
