@@ -44,7 +44,7 @@ function App() {
           </Routes>
           <Footer />
           {showAuthModal && (
-            <AuthModal onClose={() => setShowAuthModal(false)} />
+            <AuthModal onClose={() => setShowAuthModal(false)}  onAuthSuccess={() => window.location.reload()} />
           )}
         </>
       )}
