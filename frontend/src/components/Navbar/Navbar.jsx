@@ -10,7 +10,7 @@ const Navbar = ({ onLoginClick }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false); 
+  const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -76,7 +76,6 @@ const Navbar = ({ onLoginClick }) => {
               <li><Link to="/team" className="block px-4 py-2 hover:bg-[#cf814d]">Our Team</Link></li>
             </ul>
           </li>
-          <Link to="/booking" className="block px-4 py-2">Book Now</Link>
           <li className="cursor-pointer font-semibold">Blog</li>
           <li className="relative group cursor-pointer font-semibold">
             <div className="flex items-center gap-1">
@@ -90,14 +89,16 @@ const Navbar = ({ onLoginClick }) => {
           </li>
         </ul>
         <div className="hidden md:flex items-center gap-4">
-          <button onClick={() => handleBookNow(navigate, onLoginClick)} className="bg-[#cf814d] cursor-pointer rounded-2xl text-white border border-white py-1 px-4 hover:shadow-[0_0_25px_#cf814d] transition tracking-widest">
+          <button onClick={() => handleBookNow(navigate, onLoginClick)} className="bg-[#cf814d] text-white font-semibold rounded-lg shadow-lg uppercase tracking-widest 
+                       hover:shadow-[0_0_25px_#cf814d] cursor-pointer transition-all duration-300 py-2 px-3">
             BOOK NOW
           </button>
 
           {!isAuthenticated ? (
             <button
               onClick={onLoginClick}
-              className="bg-[#cf814d] cursor-pointer rounded-2xl px-4 py-1 border border-white hover:shadow-[0_0_25px_#cf814d] transition"
+              className="-[#cf814d] text-white font-semibold border hover:border-transparent rounded-lg shadow-lg uppercase tracking-widest 
+                       hover:shadow-[0_0_25px_#cf814d] cursor-pointer transition-all duration-300 py-2 px-3"
             >
               Sign In
             </button>
@@ -115,7 +116,7 @@ const Navbar = ({ onLoginClick }) => {
                 <ul className="absolute -right-10 mt-2 bg-black text-white shadow-md rounded-md w-40">
                   <li>
                     <Link
-                      to="/profile"
+                      to="/userProfile"
                       className="block px-4 py-2 hover:bg-[#cf814d]"
                     >
                       Profile
@@ -158,14 +159,15 @@ const Navbar = ({ onLoginClick }) => {
       {isOpen && (
         <div className="md:hidden bg-black px-4 sm:px-6 pb-4">
           <ul className="flex flex-col gap-2 mb-3 text-sm">
-            <li className="py-2 font-medium">Home</li>
+            <Link to='/'> <li className="py-2 font-medium">Home</li></Link>
             <li className="py-2 font-medium">Services</li>
             <li className="py-2 font-medium">About</li>
-            <li className="py-2 font-medium">Book Now</li>
             <li className="py-2 font-medium">Blog</li>
             <li className="py-2 font-medium">Extras</li>
           </ul>
-          <button onClick={() => handleBookNow(navigate, onLoginClick)} className="bg-[#cf814d] w-full text-white py-2 tracking-widest">
+          <button onClick={() => handleBookNow(navigate, onLoginClick)}
+            className="bg-[#cf814d] w-full text-white font-semibold rounded-lg shadow-lg uppercase tracking-widest 
+                       hover:shadow-[0_0_25px_#cf814d] cursor-pointer transition-all duration-300 py-2 px-3">
             BOOK NOW
           </button>
         </div>

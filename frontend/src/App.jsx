@@ -13,6 +13,7 @@ import Loader from './components/Loader/Loader'
 import Navbar from './components/Navbar/Navbar'
 import Footer from './components/Footer/Footer'
 import AuthModal from './components/Login/AuthModal'
+import UserProfilePage from './pages/ProfilePage/UserProfilePage';
 
 function App() {
   const location = useLocation();
@@ -41,6 +42,7 @@ function App() {
             <Route path='/testimonials' element={<Testimonials />} />
             <Route path='/booking' element={<Booking />} />
             <Route path='/single-service' element={<ServiceSingle />} />
+            <Route path='/userProfile' element={<UserProfilePage/>}/>
           </Routes>
           <Footer />
           {showAuthModal && (

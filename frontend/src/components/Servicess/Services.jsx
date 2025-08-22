@@ -24,6 +24,7 @@ const Services = ({ showButton = true }) => {
                     <div className="w-2 h-2 bg-[#cf814d] rotate-45"></div>
                 </div>
             </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 px-6 py-10 md:px-10">
                 {services.map((service, index) => (
                     <div
@@ -39,19 +40,25 @@ const Services = ({ showButton = true }) => {
                             <div className="absolute top-0 left-0 w-full h-full border-2 border-[#cf814d] z-10 translate-x-2 -translate-y-2"></div>
                             <div className="absolute top-0 left-0 w-full h-full border-2 border-[#cf814d] z-10 -translate-x-2 translate-y-2"></div>
                         </div>
+
                         <h3 className="text-white text-xl sm:text-2xl font-semibold tracking-widest mt-10 uppercase z-10 text-center">
                             {service.title}
                         </h3>
                     </div>
                 ))}
-
             </div>
+
             {showButton && (
                 <div className='flex justify-center items-center mt-10'>
-               <Link to='/services'>
-                <button className="bg-[#cf814d] text-white border font-semibold border-white py-1 px-4 hover:shadow-[0_0_25px_#cf814d] transition duration-400 cursor-pointer tracking-widest">ALL SERVICES & PRICES</button>
-               </Link>
-            </div>
+                    <Link to='/services'>
+                        <button
+                            className="bg-[#cf814d] text-white font-semibold tracking-widest px-10 py-3 uppercase rounded-lg 
+                           hover:shadow-[0_0_25px_#cf814d] transition-all duration-300 cursor-pointer"
+                        >
+                            ALL SERVICES & PRICES
+                        </button>
+                    </Link>
+                </div>
             )}
         </section>
     );

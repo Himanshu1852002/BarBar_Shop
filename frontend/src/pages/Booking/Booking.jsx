@@ -39,6 +39,7 @@ const Booking = () => {
     phone: "",
     message: "",
   });
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleServiceChange = (service) => {
     setSelectedServices((prev) =>
@@ -65,7 +66,9 @@ const Booking = () => {
       };
 
       const res = await axios.post(`${url}/bookings/createBookings`, bookingData);
-      alert(res.data.message);
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 3000);
+
       setSelectedServices([]);
       setSelectedDate(null);
       setSelectedTime("8:00 AM");
@@ -78,6 +81,43 @@ const Booking = () => {
 
   return (
     <>
+    {showPopup && (
+  <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm">
+    <div className="relative bg-gradient-to-br from-[#111] to-[#1c1c1c] p-8 rounded-2xl shadow-2xl border border-[#cf814d]/40 text-center animate-fadeIn w-[90%] sm:w-[400px]">
+
+      {/* ✅ Success Icon */}
+      <div className="mx-auto flex items-center justify-center w-16 h-16 rounded-full bg-[#cf814d] text-black mb-4 animate-bounce">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-10 w-10"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+
+      {/* ✅ Title */}
+      <h3 className="text-2xl font-bold text-[#cf814d] mb-2">Booking Confirmed!</h3>
+      <p className="text-gray-300 mb-6">
+        Thank you <span className="text-white font-semibold">{formData.name || "Guest"}</span>,  
+        your appointment has been booked successfully 🎉
+      </p>
+
+      {/* ✅ Close button (optional, auto-close to rahega) */}
+      <button
+        onClick={() => setShowPopup(false)}
+        className="px-6 py-2 bg-[#cf814d] text-black rounded-lg font-semibold hover:shadow-[0_0_15px_#cf814d] transition-all duration-300"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
+
       <section className="relative w-full min-h-120 flex flex-col justify-start items-center overflow-hidden pt-40 md:pt-40">
         <div
           className="absolute top-0 left-0 w-full h-full -z-10 bg-cover bg-center"
