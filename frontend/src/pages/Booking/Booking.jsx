@@ -1,6 +1,8 @@
 import booking_img from '../../assets/book_img.jpg';
+import axios from "axios";
 import { useState } from 'react';
-import { FaCalendarAlt } from 'react-icons/fa';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import team1 from '../../assets/team1.jpg';
 import team2 from '../../assets/team2.jpg';
 import team3 from '../../assets/team3.jpg';
@@ -27,8 +29,52 @@ const timeSlots = [
 ];
 
 const Booking = () => {
+  const [selectedServices, setSelectedServices] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState('Steven');
   const [selectedTime, setSelectedTime] = useState('8:00 AM');
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+
+  const handleServiceChange = (service) => {
+    setSelectedServices((prev) =>
+      prev.includes(service)
+        ? prev.filter((s) => s !== service)
+        : [...prev, service]
+    );
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const url = import.meta.env.VITE_BACKEND_URL;
+    console.log(url)
+    try {
+      const bookingData = {
+        services: selectedServices,
+        staff: selectedStaff,
+        date: selectedDate,
+        time: selectedTime,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+      };
+
+      const res = await axios.post(`${url}/bookings/createBookings`, bookingData);
+      alert(res.data.message);
+      setSelectedServices([]);
+      setSelectedDate(null);
+      setSelectedTime("8:00 AM");
+      setSelectedStaff("Steven");
+      setFormData({ name: "", email: "", phone: "", message: "" })
+    } catch (err) {
+      alert(err.response?.data?.message || "Booking failed");
+    }
+  };
 
   return (
     <>
@@ -63,7 +109,10 @@ const Booking = () => {
               <ul className="space-y-3">
                 {items.map((service) => (
                   <li key={service} className="flex items-center gap-3">
-                    <input type="checkbox" className="accent-[#cf814d] w-4 h-4" />
+                    <input type="checkbox"
+                      checked={selectedServices.includes(service)}
+                      onChange={() => handleServiceChange(service)}
+                      className="accent-[#cf814d] w-4 h-4" />
                     <span className="text-sm">{service}</span>
                   </li>
                 ))}
@@ -89,27 +138,37 @@ const Booking = () => {
           ))}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div>
-            <h2 className="text-lg uppercase tracking-widest mb-3">Select Date</h2>
+
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-[#111] to-[#1c1c1c] border border-[#2a2a2a] shadow-lg">
+            <h2 className="text-xl font-semibold uppercase tracking-widest mb-4 text-[#cf814d]">
+              Select Date
+            </h2>
             <div className="relative">
-              <input
-                type="date"
-                className="w-full bg-[#111] border border-[#cf814d] px-4 py-3 rounded-lg text-white focus:outline-none focus:border-[#e29d6d]"
+              <DatePicker
+                selected={selectedDate}
+                onChange={(date) => setSelectedDate(date)}
+                className="w-full bg-[#181818] border border-[#333] px-5 py-3 rounded-xl 
+                   text-white focus:outline-none focus:ring-2 focus:ring-[#cf814d] 
+                   placeholder-gray-500 transition-all duration-300"
+                placeholderText="Pick your date"
+                dateFormat="dd/MM/yyyy"
+                minDate={new Date()}
               />
-              <FaCalendarAlt className="absolute right-4 top-1/2 -translate-y-1/2 text-[#cf814d]" />
             </div>
           </div>
-          <div>
-            <h2 className="text-lg uppercase tracking-widest mb-3">Select Time</h2>
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-[#111] to-[#1c1c1c] border border-[#2a2a2a] shadow-lg">
+            <h2 className="text-xl font-semibold uppercase tracking-widest mb-4 text-[#cf814d]">
+              Select Time
+            </h2>
             <div className="flex flex-wrap gap-3">
               {timeSlots.map((time) => (
                 <button
                   key={time}
                   onClick={() => setSelectedTime(time)}
-                  className={`px-4 py-2 rounded-lg border transition-all duration-300 text-sm 
-                    ${selectedTime === time
-                      ? 'bg-[#cf814d] text-black font-semibold'
-                      : 'bg-[#1a1a1a] text-white border-[#333] hover:border-[#cf814d]'
+                  className={`px-5 py-2.5 rounded-xl border text-sm font-medium transition-all duration-300 shadow-sm
+            ${selectedTime === time
+                      ? 'bg-[#cf814d] text-black font-semibold border-[#cf814d] scale-105'
+                      : 'bg-[#181818] text-gray-300 border-[#333] hover:border-[#cf814d] hover:text-white hover:scale-105'
                     }`}
                 >
                   {time}
@@ -118,44 +177,60 @@ const Booking = () => {
             </div>
           </div>
         </div>
+
       </section>
       <section className="bg-black text-white py-14 px-6 lg:px-20">
         <h2 className="text-xl uppercase tracking-[0.3em] mb-10 flex items-center gap-3 justify-center">
           Your Details <span className="h-[1px] w-14 bg-[#cf814d]"></span>
         </h2>
 
-        <form className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="flex flex-col space-y-6">
-            <input
-              type="text"
-              placeholder="Your Name"
+        <form onSubmit={handleSubmit}>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+            <div className="flex flex-col space-y-6">
+              <input
+                type="text"
+                placeholder="Your Name"
+                name='name'
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="bg-[#111] border border-[#333] px-5 py-3 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#cf814d]"
+              />
+              <input
+                type="email"
+                placeholder="Your Email"
+                name="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="bg-[#111] border border-[#333] px-5 py-3 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#cf814d]"
+              />
+              <input
+                type="tel"
+                placeholder="Your Phone"
+                name='phone'
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="bg-[#111] border border-[#333] px-5 py-3 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#cf814d]"
+              />
+            </div>
+            <textarea
+              placeholder="Your Message"
+              rows="6"
+              name='message'
+              value={formData.message}
+              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               className="bg-[#111] border border-[#333] px-5 py-3 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#cf814d]"
-            />
-            <input
-              type="email"
-              placeholder="Your Email"
-              className="bg-[#111] border border-[#333] px-5 py-3 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#cf814d]"
-            />
-            <input
-              type="tel"
-              placeholder="Your Phone"
-              className="bg-[#111] border border-[#333] px-5 py-3 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#cf814d]"
-            />
+            ></textarea>
           </div>
-          <textarea
-            placeholder="Your Message"
-            rows="6"
-            className="bg-[#111] border border-[#333] px-5 py-3 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#cf814d]"
-          ></textarea>
+          <div className="text-center flex items-center justify-center">
+            <button
+              type="submit"
+              className="mt-10 bg-[#cf814d] text-white font-semibold tracking-widest px-10 py-3 uppercase rounded-lg hover:shadow-[0_0_25px_#cf814d] cursor-pointer transition-all duration-300"
+            >
+              Submit Booking
+            </button>
+          </div>
         </form>
-        <div className="text-center">
-          <button
-            type="submit"
-            className="mt-10 bg-[#cf814d] text-white font-semibold tracking-widest px-10 py-3 uppercase rounded-lg hover:shadow-[0_0_25px_#cf814d] cursor-pointer transition-all duration-300"
-          >
-            Submit Booking
-          </button>
-        </div>
+
       </section>
     </>
   );
