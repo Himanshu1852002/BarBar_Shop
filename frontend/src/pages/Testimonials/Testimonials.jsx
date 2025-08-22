@@ -46,17 +46,15 @@ const testimonials = [
 const Testimonials = () => {
     return (
         <>
-            <section className="relative w-full min-h-130 flex flex-col justify-center items-center overflow-hidden pt-28 md:pt-32">
-
+            <section className="relative w-full min-h-[70vh] flex flex-col justify-center items-center overflow-hidden pt-28 md:pt-32">
                 <div
                     className="absolute top-0 left-0 w-full h-full -z-10 bg-cover bg-center"
                     style={{ backgroundImage: `url(${chair_img})` }}
                 >
-
-                    <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-black to-transparent pointer-events-none" />
+                    <div className="absolute top-0 left-0 w-full h-full bg-black/60" />
                 </div>
 
-                <div className="text-center text-white z-10">
+                <div className="text-center text-white z-10 px-4">
                     <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-widest uppercase">
                         testimonials
                     </h2>
@@ -67,23 +65,29 @@ const Testimonials = () => {
                     </div>
                 </div>
             </section>
-            <section className="bg-black px-4 py-16">
-                <div className="max-w-7xl mx-auto grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <section className="bg-black px-4 py-20">
+                <div className="max-w-7xl mx-auto grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                     {testimonials.map((item, index) => (
-                        <TestimonialCard
+                        <div
                             key={index}
-                            name={item.name}
-                            message={item.message}
-                            img={item.img}
-                        />
+                            className="transform transition duration-300 hover:-translate-y-2"
+                        >
+                            <TestimonialCard
+                                name={item.name}
+                                message={item.message}
+                                img={item.img}
+                            />
+                        </div>
                     ))}
                 </div>
-                <div className='flex justify-center items-center mt-10'>
-                    <button className="bg-[#cf814d] text-white border font-semibold border-white py-1 px-4 hover:shadow-[0_0_25px_#cf814d] transition duration-400 cursor-pointer tracking-widest uppercase">load more testimonials</button>
+                <div className="flex justify-center items-center mt-14">
+                    <button className="bg-[#cf814d] cursor-pointer text-white font-semibold py-3 px-10 rounded-sm tracking-widest uppercase transition duration-300 hover:shadow-[0_0_25px_#cf814d]">
+                        load more testimonials
+                    </button>
                 </div>
             </section>
         </>
     )
 }
 
-export default Testimonials
+export default Testimonials;

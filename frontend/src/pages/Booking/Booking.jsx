@@ -40,73 +40,75 @@ const Booking = () => {
           <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-black to-transparent pointer-events-none" />
         </div>
         <div className="text-center text-white z-10 px-4">
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-widest uppercase">
+          <h2 className="text-3xl md:text-5xl font-bold tracking-[0.25em] uppercase">
             Booking
           </h2>
           <div className="flex items-center justify-center mt-4">
             <div className="w-2 md:w-3 h-2 md:h-3 bg-[#cf814d] rotate-45" />
-            <div className="h-[2px] w-20 sm:w-36 md:w-44 bg-[#cf814d]" />
+            <div className="h-[2px] w-24 sm:w-40 md:w-52 bg-[#cf814d]" />
             <div className="w-2 md:w-3 h-2 md:h-3 bg-[#cf814d] rotate-45" />
           </div>
         </div>
       </section>
-
-      <section className="bg-black text-white py-12 px-4 sm:px-6 lg:px-20">
-        <h2 className="text-lg sm:text-xl uppercase tracking-widest mb-4">Choose Services</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <section className="bg-black text-white py-14 px-6 lg:px-20">
+        <h2 className="text-xl uppercase tracking-[0.3em] mb-8 text-center">
+          Choose Services
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
           {Object.entries(services).map(([category, items]) => (
-            <div key={category}>
-              <h3 className="uppercase tracking-widest text-sm bg-[#7a4a25] px-3 py-1 inline-block mb-3">
+            <div key={category} className="bg-[#111] p-5 rounded-xl shadow-md border border-[#2a2a2a] hover:border-[#cf814d] transition-all">
+              <h3 className="uppercase tracking-widest text-sm bg-[#7a4a25] px-3 py-1 inline-block rounded mb-4">
                 {category}
               </h3>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 {items.map((service) => (
-                  <li key={service} className="flex items-center gap-2">
-                    <input type="checkbox" className="accent-[#cf814d]" />
-                    <span className="text-sm sm:text-base">{service}</span>
+                  <li key={service} className="flex items-center gap-3">
+                    <input type="checkbox" className="accent-[#cf814d] w-4 h-4" />
+                    <span className="text-sm">{service}</span>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
-
-        <h2 className="text-lg sm:text-xl uppercase tracking-widest mb-4">Choose Staff</h2>
-        <div className="flex gap-4 sm:gap-6 mb-10 flex-wrap">
+        <h2 className="text-xl uppercase tracking-[0.3em] mb-6 text-center">Choose Staff</h2>
+        <div className="flex gap-6 mb-14 flex-wrap justify-center">
           {staff.map(({ name, img }) => (
             <div
               key={name}
               onClick={() => setSelectedStaff(name)}
-              className={`cursor-pointer text-center transition-all duration-300 w-24 sm:w-28 ${selectedStaff === name
-                  ? 'border-4 border-[#cf814d] opacity-100'
-                  : 'border-2 border-transparent opacity-50 hover:opacity-80'
-                } p-1`}
+              className={`cursor-pointer text-center transition-all duration-300 w-28 p-2 rounded-xl shadow-md 
+                ${selectedStaff === name
+                  ? 'border-4 border-[#cf814d] bg-[#1c1c1c]'
+                  : 'border border-[#333] hover:border-[#cf814d] opacity-80'
+                }`}
             >
-              <img src={img} alt={name} className="w-full h-28 object-cover mb-2" />
-              <p className="text-sm sm:text-base">{name}</p>
+              <img src={img} alt={name} className="w-full h-28 object-cover mb-2 rounded-lg hover:scale-105 transition-transform" />
+              <p className="text-sm">{name}</p>
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div>
-            <h2 className="text-lg sm:text-xl uppercase tracking-widest mb-2">Select Date</h2>
+            <h2 className="text-lg uppercase tracking-widest mb-3">Select Date</h2>
             <div className="relative">
               <input
                 type="date"
-                className="w-full bg-transparent border border-[#cf814d] px-4 py-2 text-white focus:outline-none focus:border-[#e29d6d]"
+                className="w-full bg-[#111] border border-[#cf814d] px-4 py-3 rounded-lg text-white focus:outline-none focus:border-[#e29d6d]"
               />
-              <FaCalendarAlt className="absolute right-4 top-1/2 -translate-y-1/2 text-[#cf814d] pointer-events-none" />
+              <FaCalendarAlt className="absolute right-4 top-1/2 -translate-y-1/2 text-[#cf814d]" />
             </div>
           </div>
           <div>
-            <h2 className="text-lg sm:text-xl uppercase tracking-widest mb-2">Select Time</h2>
-            <div className="flex flex-wrap gap-2">
+            <h2 className="text-lg uppercase tracking-widest mb-3">Select Time</h2>
+            <div className="flex flex-wrap gap-3">
               {timeSlots.map((time) => (
                 <button
                   key={time}
                   onClick={() => setSelectedTime(time)}
-                  className={`px-3 sm:px-4 py-2 border rounded transition-all duration-300 text-sm sm:text-base ${selectedTime === time
-                      ? 'bg-[#cf814d] text-black border-[#cf814d]'
+                  className={`px-4 py-2 rounded-lg border transition-all duration-300 text-sm 
+                    ${selectedTime === time
+                      ? 'bg-[#cf814d] text-black font-semibold'
                       : 'bg-[#1a1a1a] text-white border-[#333] hover:border-[#cf814d]'
                     }`}
                 >
@@ -117,42 +119,43 @@ const Booking = () => {
           </div>
         </div>
       </section>
-
-      <section className="bg-black text-white py-12 px-4 sm:px-6 lg:px-20">
-        <h2 className="text-lg sm:text-xl uppercase tracking-widest mb-8 flex items-center gap-3">
-          Your Details <span className="h-[1px] w-10 bg-[#cf814d]"></span>
+      <section className="bg-black text-white py-14 px-6 lg:px-20">
+        <h2 className="text-xl uppercase tracking-[0.3em] mb-10 flex items-center gap-3 justify-center">
+          Your Details <span className="h-[1px] w-14 bg-[#cf814d]"></span>
         </h2>
 
-        <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="flex flex-col space-y-5">
+        <form className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="flex flex-col space-y-6">
             <input
               type="text"
               placeholder="Your Name"
-              className="bg-transparent border border-[#cf814d] px-4 py-3 placeholder-gray-400 focus:outline-none focus:border-[#e29d6d] text-sm sm:text-base"
+              className="bg-[#111] border border-[#333] px-5 py-3 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#cf814d]"
             />
             <input
               type="email"
               placeholder="Your Email"
-              className="bg-transparent border border-[#cf814d] px-4 py-3 placeholder-gray-400 focus:outline-none focus:border-[#e29d6d] text-sm sm:text-base"
+              className="bg-[#111] border border-[#333] px-5 py-3 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#cf814d]"
             />
             <input
               type="tel"
               placeholder="Your Phone"
-              className="bg-transparent border border-[#cf814d] px-4 py-3 placeholder-gray-400 focus:outline-none focus:border-[#e29d6d] text-sm sm:text-base"
+              className="bg-[#111] border border-[#333] px-5 py-3 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#cf814d]"
             />
           </div>
           <textarea
             placeholder="Your Message"
             rows="6"
-            className="bg-transparent border border-[#cf814d] px-4 py-3 placeholder-gray-400 focus:outline-none focus:border-[#e29d6d] text-sm sm:text-base"
+            className="bg-[#111] border border-[#333] px-5 py-3 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#cf814d]"
           ></textarea>
         </form>
-        <button
-          type="submit"
-          className="mt-6 bg-[#cf814d] text-white tracking-widest px-6 sm:px-8 py-2 uppercase hover:shadow-[0_0_25px_#cf814d] cursor-pointer transition-all duration-300 text-sm sm:text-base"
-        >
-          Submit Form
-        </button>
+        <div className="text-center">
+          <button
+            type="submit"
+            className="mt-10 bg-[#cf814d] text-white font-semibold tracking-widest px-10 py-3 uppercase rounded-lg hover:shadow-[0_0_25px_#cf814d] cursor-pointer transition-all duration-300"
+          >
+            Submit Booking
+          </button>
+        </div>
       </section>
     </>
   );
