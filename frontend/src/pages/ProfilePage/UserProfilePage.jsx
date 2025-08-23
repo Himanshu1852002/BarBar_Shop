@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
 const UserProfilePage = () => {
@@ -11,17 +12,29 @@ const UserProfilePage = () => {
   const [bookingIdReseduled, setBookingIdReseduled] = useState(null);
   const [newDate, setNewDate] = useState("");
   const [newTime, setNewTime] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPasswordSuccess, setShowPasswordSuccess] = useState(false);
+  const navigate = useNavigate();
+  const [showEditProfile, setShowEditProfile] = useState(false); // ✅ new state
+  const [newName, setNewName] = useState("");
+  const [newImage, setNewImage] = useState(null);
+  const [preview, setPreview] = useState(null);
 
+  // handle function for booking cancel
   const handleCancelClick = (id) => {
     setSelectedBookingId(id);
     setShowCancelPopup(true);
   };
 
+  // handle function for booking reshedule
   const handleRescheduleClick = (id) => {
     setBookingIdReseduled(id);
     setShowReschedulePopup(true);
   };
 
+  // useEffect for get userInfo
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -32,7 +45,11 @@ const UserProfilePage = () => {
             Authorization: `Bearer ${token}`,
           }
         })
-        setUser(res.data.user);
+        setUser({
+          ...res.data.user,
+          image: res.data.image,
+        });
+        setNewName(res.data.user.name || "");
       } catch (error) {
         console.error("Error fetching user:", error);
       }
@@ -40,6 +57,7 @@ const UserProfilePage = () => {
     fetchUserInfo();
   }, []);
 
+  // useEffect for get bookings
   useEffect(() => {
     const getBookingData = async () => {
       try {
@@ -53,6 +71,7 @@ const UserProfilePage = () => {
     getBookingData();
   }, [bookings]);
 
+  // booking cancel API call
   const cancelBooking = async (id) => {
     try {
       const url = import.meta.env.VITE_BACKEND_URL;
@@ -70,6 +89,7 @@ const UserProfilePage = () => {
     }
   }
 
+  // Reshedule booking API call
   const rescheduleBooking = async () => {
     try {
       const url = import.meta.env.VITE_BACKEND_URL;
@@ -96,12 +116,109 @@ const UserProfilePage = () => {
     }
   };
 
+  // Password change function and API call
+  const passwordChange = async () => {
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      alert("All fields are required!");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      alert("New passwords do not match!");
+      return;
+    }
+
+    try {
+      const url = import.meta.env.VITE_BACKEND_URL;
+      const token = localStorage.getItem("token");
+
+      await axios.put(
+        `${url}/users/changePassword`,
+        { oldPassword, newPassword, confirmPassword },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setShowPasswordSuccess(true);
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error) {
+      console.error("Error changing password:", error);
+      alert(error.response?.data?.message || "Failed to update password ❌");
+    }
+  }
+
+  // useEffect for close popup automatic
+  useEffect(() => {
+    if (showPasswordSuccess) {
+      const timer = setTimeout(() => {
+        setShowPasswordSuccess(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showPasswordSuccess]);
+
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setNewImage(file);
+    setPreview(URL.createObjectURL(file));
+  };
+
+  // 🔹 Handle profile update
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const url = import.meta.env.VITE_BACKEND_URL;
+      const token = localStorage.getItem("token");
+
+      const formData = new FormData();
+      formData.append("name", newName);
+      if (newImage) {
+        formData.append("image", newImage);
+      }
+
+      const res = await axios.put(`${url}/users/update-profile`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      setUser((prev) => ({
+        ...prev,
+        name: res.data.user.name,
+        avatar: res.data.image || prev.avatar,
+      }));
+
+      setShowEditProfile(false);
+      setPreview(null);
+      setNewImage(null);
+      setNewName(""); 
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert(error.response?.data?.message || "Failed to update profile ❌");
+    }
+  };
+
+
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
 
   const profile = {
     name: user.name,
     email: user.email,
     phone: bookings.length > 0 ? bookings[0].phone : "Not available",
-    avatar: "https://i.pinimg.com/474x/94/a6/66/94a666d648af0de5adb025828cd998a0.jpg",
+    avatar:
+      user.image || 
+      "https://i.pinimg.com/474x/94/a6/66/94a666d648af0de5adb025828cd998a0.jpg",
   };
 
   return (
@@ -135,23 +252,20 @@ const UserProfilePage = () => {
           <div className="space-y-14">
             {activeTab === "overview" && (
               <div className="max-w-md mx-auto bg-gradient-to-br from-[#1a1a1a] to-[#2b2b2b] p-10 rounded-3xl shadow-2xl border border-[#cf814d] text-center backdrop-blur-sm">
-                <div className="relative w-36 h-36 mx-auto mb-6">
+                <div className="w-36 h-36 mx-auto mb-6">
                   <img
                     src={profile.avatar}
                     alt="Avatar"
                     className="w-full h-full object-cover rounded-full border-4 border-[#cf814d] shadow-lg"
                   />
-                  <div className="absolute bottom-0 right-0 w-10 h-10 bg-[#cf814d] rounded-full flex items-center justify-center text-black font-bold text-lg cursor-pointer">
-                    ✎
-                  </div>
                 </div>
                 <h3 className="text-3xl font-bold mb-2">{profile.name}</h3>
                 <p className="text-gray-300 mb-6">{profile.email}</p>
                 <div className="flex justify-center gap-5">
-                  <div className="bg-[#cf814d] px-7 py-2 rounded-full font-semibold hover:shadow-[0_0_25px_#cf814d] transition-all cursor-pointer">
+                  <div onClick={() => setShowEditProfile(true)} className="bg-[#cf814d] px-7 py-2 rounded-full font-semibold hover:shadow-[0_0_25px_#cf814d] transition-all cursor-pointer">
                     Edit Profile
                   </div>
-                  <div className="bg-red-600 px-7 py-2 rounded-full font-semibold hover:shadow-[0_0_25px_red] transition-all cursor-pointer">
+                  <div onClick={handleLogout} className="bg-red-600 px-7 py-2 rounded-full font-semibold hover:shadow-[0_0_25px_red] transition-all cursor-pointer">
                     Logout
                   </div>
                 </div>
@@ -244,19 +358,40 @@ const UserProfilePage = () => {
             {activeTab === "password" && (
               <div className="max-w-md mx-auto bg-gradient-to-br from-[#1a1a1a] to-[#2b2b2b] p-10 rounded-3xl shadow-2xl border border-[#cf814d]">
                 <h3 className="text-2xl font-bold mb-6 text-[#cf814d]">Change Password</h3>
-                {["Old Password", "New Password", "Confirm Password"].map((field) => (
-                  <input
-                    key={field}
-                    type="password"
-                    placeholder={field}
-                    className="w-full mb-5 px-5 py-3 rounded-2xl bg-[#1c1c1c] border border-gray-600 focus:border-[#cf814d] focus:outline-none shadow-inner text-lg"
-                  />
-                ))}
-                <div className="w-full bg-[#cf814d] py-3 rounded-full font-bold hover:shadow-[0_0_25px_#cf814d] transition-all text-center cursor-pointer">
+
+                <input
+                  type="password"
+                  placeholder="Old Password"
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  className="w-full mb-5 px-5 py-3 rounded-2xl bg-[#1c1c1c] border border-gray-600 focus:border-[#cf814d] focus:outline-none shadow-inner text-lg"
+                />
+
+                <input
+                  type="password"
+                  placeholder="New Password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full mb-5 px-5 py-3 rounded-2xl bg-[#1c1c1c] border border-gray-600 focus:border-[#cf814d] focus:outline-none shadow-inner text-lg"
+                />
+
+                <input
+                  type="password"
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full mb-5 px-5 py-3 rounded-2xl bg-[#1c1c1c] border border-gray-600 focus:border-[#cf814d] focus:outline-none shadow-inner text-lg"
+                />
+
+                <div
+                  onClick={passwordChange}
+                  className="w-full bg-[#cf814d] py-3 rounded-full font-bold hover:shadow-[0_0_25px_#cf814d] transition-all text-center cursor-pointer"
+                >
                   Update Password
                 </div>
               </div>
             )}
+
           </div>
         </div>
       </section>
@@ -321,6 +456,99 @@ const UserProfilePage = () => {
         </div>
       )}
 
+      {showPasswordSuccess && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm">
+          <div className="relative bg-gradient-to-br from-[#111] to-[#1c1c1c] p-8 rounded-2xl shadow-2xl border border-[#cf814d]/40 text-center animate-fadeIn w-[90%] sm:w-[400px]">
+            <div className="mx-auto flex items-center justify-center w-16 h-16 rounded-full bg-[#cf814d] text-black mb-4 animate-bounce">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-10 w-10"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h3 className="text-2xl font-bold text-[#cf814d] mb-2">Password Changed!</h3>
+            <p className="text-gray-300 mb-2">
+              Your password has been updated successfully 🔐
+            </p>
+            <p className="text-sm text-gray-500">(This will close automatically)</p>
+          </div>
+        </div>
+      )}
+
+     {showEditProfile && (
+  <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/60 backdrop-blur-sm">
+    <div className="bg-gradient-to-br from-[#111] to-[#1c1c1c] p-8 rounded-2xl shadow-2xl border border-[#cf814d]/40 w-[90%] sm:w-[400px] animate-fadeIn">
+      
+      {/* Heading */}
+      <h2 className="text-2xl font-bold text-[#cf814d] mb-6 text-center">
+        Edit Profile
+      </h2>
+
+      <form onSubmit={handleProfileUpdate} className="space-y-5">
+        {/* Name Input */}
+        <div>
+          <label className="block text-sm text-gray-400 mb-2">Full Name</label>
+          <input
+            type="text"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            placeholder="Enter your name"
+            className="w-full px-4 py-3 rounded-xl bg-[#1c1c1c] border border-gray-600 focus:border-[#cf814d] focus:ring-2 focus:ring-[#cf814d]/40 focus:outline-none shadow-inner text-white placeholder-gray-500 text-lg"
+          />
+        </div>
+
+        {/* Image Upload */}
+        <div>
+          <label className="block text-sm text-gray-400 mb-2">Profile Image</label>
+          <div className="flex items-center justify-between bg-[#1c1c1c] border border-gray-600 rounded-xl px-3 py-2">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="text-gray-400 file:mr-3 file:py-2 file:px-4 
+                        file:rounded-md file:border-0 
+                        file:text-sm file:font-semibold
+                        file:bg-[#cf814d] file:text-black
+                        hover:file:bg-[#e6a45f] cursor-pointer"
+            />
+          </div>
+
+          {preview && (
+            <div className="flex justify-center mt-4">
+              <img
+                src={preview}
+                alt="preview"
+                className="w-24 h-24 rounded-full border-2 border-[#cf814d] object-cover shadow-md"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Buttons */}
+        <div className="flex justify-end gap-4 pt-4">
+          <button
+            type="button"
+            onClick={() => setShowEditProfile(false)}
+            className="px-5 py-2 rounded-xl bg-gray-600 hover:bg-gray-500 transition-all"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-5 py-2 rounded-xl bg-[#cf814d] hover:bg-[#e6a45f] text-black font-semibold transition-all shadow-md"
+          >
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
 
     </>
   );
