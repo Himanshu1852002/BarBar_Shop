@@ -9,6 +9,7 @@ const bookingSchema = new mongoose.Schema({
   email: { type: String, required: true },
   phone: { type: String, required: true },
   message: { type: String, default: "", },
+  status: { type: String, enum: ["pending", "confirmed", "canceled", "Rescheduled"], default: "pending" }
 }, { timestamps: true });
 
 const Booking = mongoose.model("Booking", bookingSchema);
