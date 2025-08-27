@@ -12,7 +12,7 @@ const AllServicePage = () => {
           style={{ backgroundImage: `url(${chairImg})` }}
         >
           <div className="absolute inset-0 bg-black/60" />
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-98 bg-gradient-to-t from-black to-transparent" />
         </div>
         <div className="text-center text-white z-10">
           <h2 className="text-3xl md:text-5xl font-bold tracking-widest uppercase">

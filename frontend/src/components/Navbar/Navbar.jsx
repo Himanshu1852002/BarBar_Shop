@@ -76,7 +76,9 @@ const Navbar = ({ onLoginClick }) => {
               <li><Link to="/team" className="block px-4 py-2 hover:bg-[#cf814d]">Our Team</Link></li>
             </ul>
           </li>
+       <Link to='/blog'>
           <li className="cursor-pointer font-semibold">Blog</li>
+       </Link>
           <li className="relative group cursor-pointer font-semibold">
             <div className="flex items-center gap-1">
               <span>Extras</span>
