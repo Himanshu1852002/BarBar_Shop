@@ -2,18 +2,20 @@ import { useState } from "react";
 import axios from "axios";
 import { AiOutlineClose } from "react-icons/ai";
 import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
+import { DotLoader } from "react-spinners";
 
 const AuthModal = ({ onClose, onAuthSuccess }) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = import.meta.env.VITE_BACKEND_URL;
-
+    setLoading(true);
     try {
       const endpoint = isSignUp ? "/users/register" : "/users/login";
       const response = await axios.post(`${url}${endpoint}`, formData);
@@ -22,12 +24,18 @@ const AuthModal = ({ onClose, onAuthSuccess }) => {
         localStorage.setItem("token", response.data.token);
         setMessage(isSignUp ? "Signup successful ✅" : response.data.message);
         onAuthSuccess();
-        onClose();
+       
       } else {
         setMessage(response.data.message);
       }
     } catch (error) {
       setMessage(`Something went wrong ${isSignUp ? "during signup!" : "during login!"}`);
+    }
+    finally {
+      setTimeout(() => {
+        setLoading(false);
+         onClose();
+      }, 5000);
     }
   };
 
@@ -88,7 +96,11 @@ const AuthModal = ({ onClose, onAuthSuccess }) => {
             className="w-full mt-6 py-3 bg-[#cf814d] text-white font-semibold rounded-lg shadow-lg uppercase tracking-widest 
                        hover:shadow-[0_0_25px_#cf814d] cursor-pointer transition-all duration-300"
           >
-            {isSignUp ? "Sign Up" : "Login"}
+            {loading ? (
+              <DotLoader size={20} color="#fff" />
+            ) : (
+              isSignUp ? "Sign Up" : "Login"
+            )}
           </button>
         </form>
         {message && <p className="text-center text-gray-300 mt-4">{message}</p>}
