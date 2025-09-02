@@ -16,28 +16,53 @@ import AuthModal from './components/Login/AuthModal'
 import UserProfilePage from './pages/ProfilePage/UserProfilePage';
 import PageNotFound from './pages/404/PageNotFound';
 import Blog from './pages/Blog/Blog';
+import AdminDashboard from './components/Admin/AdminDashboard/AdminDashboard';
+import AdminAuthModal from './components/Admin/AdminLogin/AdminAuthModal';
+import Dashboard from './pages/Admin/Dashboard/Dashboard';
+import BookingManagement from './pages/Admin/BookingManagement/BookingManagement';
+import EmployeeManagement from './pages/Admin/Employee/EmployeeManagement';
+import CustomerManagement from './pages/Admin/Customer/CustomerManagement';
+import Settings from './components/Admin/Setting/Settings';
 
 function App() {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 1000); // 1 second delay
+    const timer = setTimeout(() => setLoading(false), 1000);
     return () => clearTimeout(timer);
   }, [location]);
 
-  const isNotFoundPage = location.pathname !== '/' &&
-    !['/services', '/aboutus', '/team', '/contactus', '/testimonials', '/booking', '/single-service', '/userProfile','/blog']
-      .includes(location.pathname);
+  const isNotFoundPage =
+    location.pathname !== '/' &&
+    ![
+      '/services',
+      '/aboutus',
+      '/team',
+      '/contactus',
+      '/testimonials',
+      '/booking',
+      '/single-service',
+      '/userProfile',
+      '/blog',
+    ].includes(location.pathname) &&
+    !location.pathname.startsWith("/admin");
+
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
   return (
     <>
       {loading ? (
         <Loader />
       ) : (
         <>
-          {!isNotFoundPage && <Navbar onLoginClick={() => setShowAuthModal(true)} />}
+          {!isNotFoundPage && !isAdminRoute && (
+            <Navbar onLoginClick={() => setShowAuthModal(true)} />
+          )}
+
           <Routes>
             <Route path='/' element={<Home onLoginClick={() => setShowAuthModal(true)} />} />
             <Route path='/services' element={<AllServicePage />} />
@@ -48,12 +73,35 @@ function App() {
             <Route path='/booking' element={<Booking />} />
             <Route path='/single-service' element={<ServiceSingle />} />
             <Route path='/userProfile' element={<UserProfilePage />} />
-            <Route path='/blog' element={<Blog/>}/>
+            <Route path='/blog' element={<Blog />} />
             <Route path='/*' element={<PageNotFound />} />
+
+            <Route
+              path="/admin/*"
+              element={
+                isAdminAuthenticated ? (
+                  <AdminDashboard />
+                ) : (
+                  <AdminAuthModal
+                    onSuccess={() => setIsAdminAuthenticated(true)}
+                  />
+                )
+              }
+            >
+              <Route path='dashboard' element={<Dashboard />} />
+              <Route path='bookingManagement' element={<BookingManagement />} />
+              <Route path='employeeManagement' element={<EmployeeManagement />} />
+              <Route path='customerManagement' element={<CustomerManagement />} />
+              <Route path='settings' element={<Settings />} />
+            </Route>
           </Routes>
-          {!isNotFoundPage && <Footer />}
+          {!isNotFoundPage && !isAdminRoute && <Footer />}
+
           {showAuthModal && (
-            <AuthModal onClose={() => setShowAuthModal(false)} onAuthSuccess={() => window.location.reload()} />
+            <AuthModal
+              onClose={() => setShowAuthModal(false)}
+              onAuthSuccess={() => window.location.reload()}
+            />
           )}
         </>
       )}
