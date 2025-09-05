@@ -1,27 +1,10 @@
+import axios from "axios";
+import { useEffect } from "react";
 import { useState } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 
 const EmployeeManagement = () => {
-  const [employees, setEmployees] = useState([
-    {
-      id: 1,
-      name: "Rahul Sharma",
-      email: "rahul@example.com",
-      phone: "9876543210",
-      role: "Barber",
-      services: ["Haircut", "Shave"],
-      image: "https://randomuser.me/api/portraits/men/32.jpg", // demo image
-    },
-    {
-      id: 2,
-      name: "Neha Verma",
-      email: "neha@example.com",
-      phone: "9876500000",
-      role: "Stylist",
-      services: ["Hair Styling", "Color"],
-      image: "https://randomuser.me/api/portraits/women/44.jpg", // demo image
-    },
-  ]);
+  const [employees, setEmployees] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
@@ -31,9 +14,9 @@ const EmployeeManagement = () => {
     phone: "",
     role: "Barber",
     services: [],
-    image: null, // file store karega
+    image: null,
   });
-  const [preview, setPreview] = useState(null); // preview url
+  const [preview, setPreview] = useState(null);
 
   const roles = ["Stylist", "Barber", "Receptionist"];
   const allServices = ["Haircut", "Shave", "Hair Styling", "Color", "Massage"];
@@ -46,7 +29,7 @@ const EmployeeManagement = () => {
     const file = e.target.files[0];
     if (file) {
       setFormData({ ...formData, image: file });
-      setPreview(URL.createObjectURL(file)); // preview ke liye
+      setPreview(URL.createObjectURL(file));
     }
   };
 
@@ -59,57 +42,92 @@ const EmployeeManagement = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const url = import.meta.env.VITE_BACKEND_URL;
+    try {
+      const form = new FormData();
+      form.append("name", formData.name);
+      form.append("email", formData.email);
+      form.append("phone", formData.phone);
+      form.append("role", formData.role);
+      formData.services.forEach((s) => form.append("services", s));
+      if (formData.image) {
+        form.append("image", formData.image);
+      }
 
-    // agar edit kar rahe ho
-    if (editingEmployee) {
-      setEmployees((prev) =>
-        prev.map((emp) =>
-          emp.id === editingEmployee.id
-            ? {
-                ...formData,
-                id: emp.id,
-                image: preview || emp.image, // frontend demo me preview hi dikhayenge
-              }
-            : emp
-        )
-      );
-    } else {
-      setEmployees((prev) => [
-        ...prev,
-        {
-          ...formData,
-          id: Date.now(),
-          image: preview, // filhal preview show karenge
-        },
-      ]);
+      let res;
+      if (editingEmployee) {
+        res = await axios.put(`${url}/employees/editEmployee/${editingEmployee._id}`, form, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        setEmployees((prev) =>
+          prev.map((emp) => (emp._id === res.data.employee._id ? res.data.employee : emp))
+        );
+      } else {
+        res = await axios.post(`${url}/employees/addEmployee`, form, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        setEmployees((prev) => [...prev, res.data.employee]);
+      }
+
+      // Reset
+      setShowModal(false);
+      setEditingEmployee(null);
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        role: "Barber",
+        services: [],
+        image: null,
+      });
+      setPreview(null);
+    } catch (error) {
+      console.error("Error:", error);
     }
-
-    // modal reset
-    setShowModal(false);
-    setEditingEmployee(null);
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      role: "Barber",
-      services: [],
-      image: null,
-    });
-    setPreview(null);
   };
 
   const handleEdit = (employee) => {
     setEditingEmployee(employee);
-    setFormData({ ...employee, image: null }); // image file ko null rakhenge
-    setPreview(employee.image); // purani image preview me dikhayenge
+    setFormData({
+      name: employee.name,
+      email: employee.email,
+      phone: employee.phone,
+      role: employee.role,
+      services: employee.services,
+      image: null,
+    });
+    setPreview(`http://localhost:5000${employee.image}`);
     setShowModal(true);
   };
 
-  const handleDelete = (id) => {
-    setEmployees(employees.filter((emp) => emp.id !== id));
+
+  const handleDelete = async (id) => {
+    const url = import.meta.env.VITE_BACKEND_URL;
+    try {
+      await axios.delete(`${url}/employees/deleteEmployee/${id}`);
+      setEmployees(employees.filter((emp) => emp._id !== id));
+    } catch (error) {
+      console.error("Error deleting employee:", error);
+    }
   };
+
+
+  useEffect(() => {
+    const url = import.meta.env.VITE_BACKEND_URL;
+    const getEmployees = async () => {
+      try {
+        const response = await axios.get(`${url}/employees/getEmployees`);
+        setEmployees(response.data.employees)
+      } catch (error) {
+        console.error("Error get employee:", error);
+      }
+    }
+    getEmployees()
+  }, [])
 
   return (
     <div className="p-8 min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
@@ -144,14 +162,13 @@ const EmployeeManagement = () => {
             {employees.map((emp, idx) => (
               <tr
                 key={emp.id}
-                className={`${
-                  idx % 2 === 0 ? "bg-gray-50/60" : "bg-white"
-                } hover:bg-indigo-50 transition`}
+                className={`${idx % 2 === 0 ? "bg-gray-50/60" : "bg-white"
+                  } hover:bg-indigo-50 transition`}
               >
                 {/* Image */}
                 <td className="p-4">
                   <img
-                    src={emp.image || "https://via.placeholder.com/50"}
+                    src={`http://localhost:5000${emp.image}`}
                     alt={emp.name}
                     className="w-12 h-12 rounded-full object-cover border"
                   />
@@ -180,7 +197,7 @@ const EmployeeManagement = () => {
                     <FaEdit />
                   </button>
                   <button
-                    onClick={() => handleDelete(emp.id)}
+                    onClick={() => handleDelete(emp._id)}
                     className="text-red-600 hover:text-red-800"
                   >
                     <FaTrash />

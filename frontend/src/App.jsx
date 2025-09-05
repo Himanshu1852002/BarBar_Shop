@@ -1,6 +1,7 @@
 import './App.css'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { useEffect, useState } from "react";
+
 import Home from './pages/Home/Home'
 import AllServicePage from './pages/Services/AllServicePage'
 import Aboutus from './pages/About us/Aboutus'
@@ -30,8 +31,15 @@ function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
+  // ✅ Sirf token check karna
+  const checkAdminAuth = () => {
+    const token = localStorage.getItem("adminToken");
+    setIsAdminAuthenticated(!!token); // agar token hai → true, nahi hai → false
+  };
+
   useEffect(() => {
     setLoading(true);
+    checkAdminAuth();
     const timer = setTimeout(() => setLoading(false), 1000);
     return () => clearTimeout(timer);
   }, [location]);
@@ -76,6 +84,7 @@ function App() {
             <Route path='/blog' element={<Blog />} />
             <Route path='/*' element={<PageNotFound />} />
 
+            {/* ✅ Admin Routes */}
             <Route
               path="/admin/*"
               element={
@@ -88,6 +97,7 @@ function App() {
                 )
               }
             >
+              <Route index element={<Navigate to="dashboard" replace />} />
               <Route path='dashboard' element={<Dashboard />} />
               <Route path='bookingManagement' element={<BookingManagement />} />
               <Route path='employeeManagement' element={<EmployeeManagement />} />
@@ -95,6 +105,7 @@ function App() {
               <Route path='settings' element={<Settings />} />
             </Route>
           </Routes>
+
           {!isNotFoundPage && !isAdminRoute && <Footer />}
 
           {showAuthModal && (
@@ -109,4 +120,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

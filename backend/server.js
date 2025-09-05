@@ -7,6 +7,7 @@ import bookingRouter from './routes/bookingRoute.js';
 import path from "path";
 import { fileURLToPath } from "url";
 import adminRouter from './routes/adminRoutes.js';
+import employeeRouter from './routes/employeeRoutes.js';
 
 const app = express();
 const PORT = 5000;
@@ -32,6 +33,7 @@ app.use('/api/bookings', bookingRouter);
 
 // admin
 app.use('/api/admin', adminRouter);
+app.use('/api/employees', employeeRouter);
 
 app.listen(PORT, () => {
      console.log(`Server Started on http://localhost:${PORT}`)

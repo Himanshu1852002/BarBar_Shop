@@ -9,7 +9,7 @@ const Aboutus = () => {
                 <div
                     className="absolute top-0 left-0 w-full h-full -z-10 bg-cover bg-center"
                     style={{ backgroundImage: `url(${aboutus_img})` }}
-                >
+                >``
                     <div className="absolute top-0 left-0 w-full h-full bg-black/60" />
                 </div>
 

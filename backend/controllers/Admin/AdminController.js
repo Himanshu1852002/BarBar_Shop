@@ -20,11 +20,11 @@ const adminRegister = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newAdmin = new Admin({ 
-      name, 
-      email, 
-      phone, 
-      password: hashedPassword 
+    const newAdmin = new Admin({
+      name,
+      email,
+      phone,
+      password: hashedPassword
     });
     await newAdmin.save();
 
@@ -90,7 +90,46 @@ const adminLogin = async (req, res) => {
   }
 };
 
+const getAdminProfile = async (req, res) => {
+  try {
+    const adminId = req.admin.id;
+    const admin = await Admin.findById(adminId).select("-password");
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+    return res.status(200).json({ admin });
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
+
+const adminUpdateProfile = async (req, res) => {
+  try {
+    const adminId = req.admin.id;
+    const { name, email, phone } = req.body;
+
+    const updatedAdmin = await Admin.findByIdAndUpdate(
+      adminId,
+      { name, email, phone },
+      { new: true }
+    ).select("-password");
+
+    if (!updatedAdmin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    return res.status(200).json({ admin: updatedAdmin });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 export {
   adminRegister,
-  adminLogin
+  adminLogin,
+  getAdminProfile,
+  adminUpdateProfile
 };

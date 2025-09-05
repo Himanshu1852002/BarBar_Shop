@@ -183,5 +183,15 @@ const editUserInfo = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
 
-export { userRegister, userLogin, getUserInfo, changePassword, editUserInfo };
+    try {
+        const users = await User.find().select('-password');
+        res.json({ success: true, users });
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(500).json({ success: false, message: "Server error ⚠️" });
+    }
+}
+
+export { userRegister, userLogin, getUserInfo, changePassword, editUserInfo, getAllUsers };

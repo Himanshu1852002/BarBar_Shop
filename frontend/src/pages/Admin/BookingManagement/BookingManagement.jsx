@@ -1,64 +1,92 @@
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import {
   FaCheckCircle,
   FaTimesCircle,
   FaCalendarAlt,
+  FaTrash,
 } from "react-icons/fa";
 
 const BookingManagement = () => {
-  const [bookings, setBookings] = useState([
-    {
-      id: 1,
-      services: ["Haircut", "Beard Trim"],
-      staff: "Amit",
-      date: "2025-09-02",
-      time: "10:30 AM",
-      name: "Rahul Sharma",
-      email: "rahul@example.com",
-      phone: "9876543210",
-      status: "pending",
-    },
-    {
-      id: 2,
-      services: ["Facial"],
-      staff: "Sneha",
-      date: "2025-09-02",
-      time: "12:00 PM",
-      name: "Priya Verma",
-      email: "priya@example.com",
-      phone: "9988776655",
-      status: "confirmed",
-    },
-    {
-      id: 3,
-      services: ["Massage"],
-      staff: "Vivek",
-      date: "2025-09-03",
-      time: "2:00 PM",
-      name: "Ankit Singh",
-      email: "ankit@example.com",
-      phone: "9123456780",
-      status: "canceled",
-    },
-  ]);
+  const [bookings, setBookings] = useState([]);
+  const [services, setServices] = useState([]);
+  const [employees, setEmployees] = useState([]);
+
+  useEffect(() => {
+    const getBookings = async () => {
+      const url = import.meta.env.VITE_BACKEND_URL;
+      try {
+        const res = await axios.get(`${url}/bookings/getBookings`);
+        const data = res.data.bookings;
+
+        setBookings(data);
+
+        // ✅ Extract unique services
+        const serviceSet = new Set();
+        data.forEach((b) => {
+          if (Array.isArray(b.services)) {
+            b.services.forEach((s) => serviceSet.add(s));
+          } else if (b.services) {
+            serviceSet.add(b.services);
+          }
+        });
+
+        // ✅ Extract unique employees
+        const employeeSet = new Set(data.map((b) => b.staff));
+
+        setServices([...serviceSet]);
+        setEmployees([...employeeSet]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getBookings();
+  }, []);
 
   // Filters
   const [filterService, setFilterService] = useState("");
   const [filterEmployee, setFilterEmployee] = useState("");
   const [filterDate, setFilterDate] = useState("");
 
+  // ✅ Convert UTC → IST
+  const formatIST = (utcDate, time) => {
+    try {
+      const dateObj = new Date(utcDate);
+      const options = {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      };
+      const istDate = dateObj.toLocaleDateString("en-IN", options);
+      return `${istDate} at ${time}`;
+    } catch (error) {
+      return `${utcDate} at ${time}`;
+    }
+  };
+
   // Actions
   const handleApprove = (id) =>
     setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, status: "confirmed" } : b))
+      prev.map((b) => (b._id === id ? { ...b, status: "confirmed" } : b))
     );
 
   const handleCancel = (id) =>
     setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, status: "canceled" } : b))
+      prev.map((b) => (b._id === id ? { ...b, status: "canceled" } : b))
     );
 
   const handleReschedule = (id) => alert(`Reschedule Booking ID: ${id}`);
+
+  const handleDelete = async (id) => {
+    const url = import.meta.env.VITE_BACKEND_URL;
+    try {
+      await axios.delete(`${url}/bookings/deleteBooking/${id}`);
+      setBookings((prev) => prev.filter((b) => b._id !== id));
+    } catch (error) {
+      console.log("Delete error:", error);
+    }
+  };
 
   const filteredBookings = bookings.filter((b) => {
     return (
@@ -76,28 +104,35 @@ const BookingManagement = () => {
 
       {/* Filters */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+        {/* Services Filter */}
         <select
           value={filterService}
           onChange={(e) => setFilterService(e.target.value)}
           className="p-3 border rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 bg-white"
         >
           <option value="">Filter by Service</option>
-          <option value="Haircut">Haircut</option>
-          <option value="Facial">Facial</option>
-          <option value="Massage">Massage</option>
+          {services.map((s, i) => (
+            <option key={i} value={s}>
+              {s}
+            </option>
+          ))}
         </select>
 
+        {/* Employee Filter */}
         <select
           value={filterEmployee}
           onChange={(e) => setFilterEmployee(e.target.value)}
           className="p-3 border rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 bg-white"
         >
           <option value="">Filter by Employee</option>
-          <option value="Amit">Amit</option>
-          <option value="Sneha">Sneha</option>
-          <option value="Vivek">Vivek</option>
+          {employees.map((emp, i) => (
+            <option key={i} value={emp}>
+              {emp}
+            </option>
+          ))}
         </select>
 
+        {/* Date Filter */}
         <input
           type="date"
           value={filterDate}
@@ -111,7 +146,7 @@ const BookingManagement = () => {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredBookings.map((b) => (
             <div
-              key={b.id}
+              key={b._id}
               className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition transform hover:-translate-y-1"
             >
               <div className="flex justify-between items-center mb-4">
@@ -131,34 +166,72 @@ const BookingManagement = () => {
                 </span>
               </div>
               <div className="space-y-2 text-sm text-gray-600">
-                <p><strong>📧</strong> {b.email}</p>
-                <p><strong>📞</strong> {b.phone}</p>
-                <p><strong>🛠 Services:</strong> {b.services.join(", ")}</p>
-                <p><strong>👤 Staff:</strong> {b.staff}</p>
-                <p><strong>📅</strong> {b.date} at {b.time}</p>
+                <p>
+                  <strong>📧</strong> {b.email}
+                </p>
+                <p>
+                  <strong>📞</strong> {b.phone}
+                </p>
+                <p>
+                  <strong>🛠 Services:</strong>{" "}
+                  {Array.isArray(b.services) ? b.services.join(", ") : b.services}
+                </p>
+                <p>
+                  <strong>👤 Staff:</strong> {b.staff}
+                </p>
+                <p>
+                  <strong>📅</strong> {formatIST(b.date, b.time)}
+                </p>
               </div>
               <div className="flex gap-3 mt-5 justify-end">
-                <button
-                  onClick={() => handleApprove(b.id)}
-                  className="p-2 rounded-lg bg-green-500 text-white hover:bg-green-600 shadow-md"
-                  title="Approve"
-                >
-                  <FaCheckCircle size={18} />
-                </button>
-                <button
-                  onClick={() => handleCancel(b.id)}
-                  className="p-2 rounded-lg bg-red-500 text-white hover:bg-red-600 shadow-md"
-                  title="Cancel"
-                >
-                  <FaTimesCircle size={18} />
-                </button>
-                <button
-                  onClick={() => handleReschedule(b.id)}
-                  className="p-2 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600 shadow-md"
-                  title="Reschedule"
-                >
-                  <FaCalendarAlt size={18} />
-                </button>
+                {/* Approve */}
+                <div className="relative group">
+                  <button
+                    onClick={() => handleApprove(b._id)}
+                    className="p-2 rounded-lg bg-green-500 text-white hover:bg-green-600 shadow-md"
+                  >
+                    <FaCheckCircle size={18} />
+                  </button>
+                  <span className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded px-2 py-1">
+                    Approve Booking
+                  </span>
+                </div>
+                {/* Cancel */}
+                <div className="relative group">
+                  <button
+                    onClick={() => handleCancel(b._id)}
+                    className="p-2 rounded-lg bg-red-500 text-white hover:bg-red-600 shadow-md"
+                  >
+                    <FaTimesCircle size={18} />
+                  </button>
+                  <span className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded px-2 py-1">
+                    Cancel Booking
+                  </span>
+                </div>
+                {/* Reschedule */}
+                <div className="relative group">
+                  <button
+                    onClick={() => handleReschedule(b._id)}
+                    className="p-2 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600 shadow-md"
+                  >
+                    <FaCalendarAlt size={18} />
+                  </button>
+                  <span className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded px-2 py-1">
+                    Reschedule Booking
+                  </span>
+                </div>
+                {/* Delete */}
+                <div className="relative group">
+                  <button
+                    onClick={() => handleDelete(b._id)}
+                    className="p-2 rounded-lg bg-gray-500 text-white hover:bg-gray-600 shadow-md"
+                  >
+                    <FaTrash size={18} />
+                  </button>
+                  <span className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded px-2 py-1">
+                    Delete Booking
+                  </span>
+                </div>
               </div>
             </div>
           ))}

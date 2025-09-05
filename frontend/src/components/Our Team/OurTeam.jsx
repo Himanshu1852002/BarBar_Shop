@@ -1,29 +1,22 @@
 import { FaFacebookF, FaTwitter, FaInstagram } from "react-icons/fa";
-import team1 from '../../assets/team1.jpg';
-import team2 from '../../assets/team2.jpg';
-import team3 from '../../assets/team3.jpg';
-import team4 from '../../assets/team4.jpg';
-
-const teamMembers = [
-    {
-        name: "STEVEN PORRECA",
-        image: team1,
-    },
-    {
-        name: "HUEY APICELLA",
-        image: team2,
-    },
-    {
-        name: "HARRY RIECKE",
-        image: team3,
-    },
-    {
-        name: "MERILYN AXE",
-        image: team4,
-    },
-];
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const OurTeam = () => {
+    const [teamMembers, setTeamMembers] = useState([]);
+
+    useEffect(() => {
+        const url = import.meta.env.VITE_BACKEND_URL;
+        const getEmployees = async () => {
+            try {
+                const response = await axios.get(`${url}/employees/getEmployees`);
+                setTeamMembers(response.data.employees)
+            } catch (error) {
+                console.error("Error get employee:", error);
+            }
+        }
+        getEmployees()
+    }, [])
     return (
         <section className="bg-black text-white py-20 px-4">
             <div className="text-center mb-8">
@@ -41,7 +34,7 @@ const OurTeam = () => {
                     <div key={idx} className="group relative text-center">
                         <div className="relative overflow-hidden border border-orange-400 group-hover:border-white transition-all duration-300">
                             <img
-                                src={member.image}
+                                src={`http://localhost:5000${member.image}`}
                                 alt={member.name}
                                 className="w-full h-auto object-cover"
                             />
