@@ -18,7 +18,7 @@ const Sidebar = () => {
   const menuItems = [
     { name: "Dashboard", path: "/admin/dashboard", icon: <FaTachometerAlt /> },
     { name: "Bookings", path: "/admin/bookingManagement", icon: <FaCalendarCheck /> },
-    { name: "Services", path: "/admin/services", icon: <FaCut /> },
+    { name: "Services", path: "/admin/service", icon: <FaCut /> },
     { name: "Employees", path: "/admin/employeeManagement", icon: <FaUsers /> },
     { name: "Customers", path: "/admin/customerManagement", icon: <FaUser /> },
     { name: "Settings", path: "/admin/settings", icon: <FaCog /> },

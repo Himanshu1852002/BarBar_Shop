@@ -24,6 +24,7 @@ import BookingManagement from './pages/Admin/BookingManagement/BookingManagement
 import EmployeeManagement from './pages/Admin/Employee/EmployeeManagement';
 import CustomerManagement from './pages/Admin/Customer/CustomerManagement';
 import Settings from './components/Admin/Setting/Settings';
+import Service from './pages/Admin/Services/Service';
 
 function App() {
   const location = useLocation();
@@ -100,6 +101,7 @@ function App() {
               <Route index element={<Navigate to="dashboard" replace />} />
               <Route path='dashboard' element={<Dashboard />} />
               <Route path='bookingManagement' element={<BookingManagement />} />
+              <Route path='service' element={<Service/>}/>
               <Route path='employeeManagement' element={<EmployeeManagement />} />
               <Route path='customerManagement' element={<CustomerManagement />} />
               <Route path='settings' element={<Settings />} />
