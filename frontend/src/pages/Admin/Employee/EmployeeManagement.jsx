@@ -100,7 +100,7 @@ const EmployeeManagement = () => {
       services: employee.services,
       image: null,
     });
-    setPreview(`http://localhost:5000${employee.image}`);
+    setPreview(`https://barbar-shop.onrender.com${employee.image}`);
     setShowModal(true);
   };
 

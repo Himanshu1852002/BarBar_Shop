@@ -34,7 +34,7 @@ const OurTeam = () => {
                     <div key={idx} className="group relative text-center">
                         <div className="relative overflow-hidden border border-orange-400 group-hover:border-white transition-all duration-300">
                             <img
-                                src={`http://localhost:5000${member.image}`}
+                                src={`https://barbar-shop.onrender.com${member.image}`}
                                 alt={member.name}
                                 className="w-full h-auto object-cover"
                             />
