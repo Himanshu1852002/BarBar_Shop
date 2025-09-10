@@ -168,7 +168,7 @@ const EmployeeManagement = () => {
                 {/* Image */}
                 <td className="p-4">
                   <img
-                    src={`http://localhost:5000${emp.image}`}
+                    src={`https://barbar-shop.onrender.com${emp.image}`}
                     alt={emp.name}
                     className="w-12 h-12 rounded-full object-cover border"
                   />
