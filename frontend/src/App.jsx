@@ -35,7 +35,7 @@ function App() {
   // ✅ Sirf token check karna
   const checkAdminAuth = () => {
     const token = localStorage.getItem("adminToken");
-    setIsAdminAuthenticated(!!token); // agar token hai → true, nahi hai → false
+    setIsAdminAuthenticated(!!token); 
   };
 
   useEffect(() => {
