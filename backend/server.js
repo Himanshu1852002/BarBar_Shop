@@ -8,6 +8,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import adminRouter from './routes/adminRoutes.js';
 import employeeRouter from './routes/employeeRoutes.js';
+import { swaggerUi, specs } from './swagger/swagger.js';
 
 const app = express();
 const PORT = 5000;
@@ -26,8 +27,10 @@ app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 // database connection
 connectDataBase();
 
-// API
+// Swagger Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
+// API
 app.use('/api/users', userRouter);
 app.use('/api/bookings', bookingRouter);
 
