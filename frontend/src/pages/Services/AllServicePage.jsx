@@ -6,37 +6,25 @@ import AddressTime from '../../components/Address & Time/AddressTime';
 const AllServicePage = () => {
   return (
     <>
-      <section className="relative w-full min-h-[70vh] flex flex-col justify-center items-center overflow-hidden pt-28 lg:px-10">
-        <div
-          className="absolute inset-0 -z-10 bg-cover bg-center"
-          style={{ backgroundImage: `url(${chairImg})` }}
-        >
-          <div className="absolute inset-0 bg-black/60" />
-          <div className="absolute inset-x-0 bottom-0 h-98 bg-gradient-to-t from-black to-transparent" />
+      {/* Hero */}
+      <section className="relative w-full h-[55vh] flex flex-col justify-end items-center overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${chairImg})` }}>
+          <div className="absolute inset-0 bg-black/65" />
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black to-transparent" />
         </div>
-        <div className="text-center text-white z-10">
-          <h2 className="text-3xl md:text-5xl font-bold tracking-widest uppercase">
-            Services
-          </h2>
-          <div className="flex items-center justify-center mt-4">
-            <div className="w-3 h-3 bg-[#cf814d] rotate-45" />
-            <div className="h-[2px] w-24 sm:w-36 md:w-44 bg-[#cf814d]" />
-            <div className="w-3 h-3 bg-[#cf814d] rotate-45" />
-          </div>
-        </div>
-        <div className="w-full mt-12 bg-black/80 text-white py-8 px-6 sm:px-12 md:px-20 text-center z-10">
-          <p className="text-base sm:text-lg md:text-2xl leading-relaxed max-w-4xl mx-auto">
-            Step into our stylish and comfortable space, where the blend of
-            vintage and contemporary decor sets the perfect backdrop for your
-            grooming journey. We pay attention to every detail, from the moment
-            you walk through our doors until you leave with a fresh, confident
-            look.
+        <div className="relative z-10 text-center pb-14 px-4">
+          <p className="text-[#cf814d] text-xs tracking-[0.4em] uppercase mb-3 font-medium">Premium Grooming</p>
+          <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-widest uppercase mb-4">
+            Our Services
+          </h1>
+          <p className="text-gray-300 text-sm md:text-base max-w-xl mx-auto leading-relaxed">
+            Step into our stylish space where vintage meets contemporary — crafted for your perfect grooming journey.
           </p>
         </div>
       </section>
-      <Prices />
 
       <Services showButton={false} />
+      <Prices />
       <AddressTime />
     </>
   );

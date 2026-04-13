@@ -2,7 +2,9 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import './TrendingStyle.css'
 import 'swiper/css';
 import 'swiper/css/navigation';
-import { Navigation } from 'swiper/modules';
+import 'swiper/css/effect-coverflow';
+import { Navigation, EffectCoverflow, Autoplay } from 'swiper/modules';
+import { GiScissors } from 'react-icons/gi';
 
 import style1 from '../../assets/style1.jpg'
 import style2 from '../../assets/style2.jpg'
@@ -30,65 +32,57 @@ const styles = [
 
 const TrendingStyles = () => {
   return (
-    <section className="py-15 bg-black">
-      <div className="text-center mb-15">
-        <h2 className="text-white text-2xl sm:text-3xl md:text-4xl font-bold tracking-widest uppercase">
+    <section className="py-20 bg-[#0a0a0a] overflow-hidden">
+      <div className="text-center mb-14">
+        <p className="text-[#cf814d] text-xs tracking-[0.4em] uppercase mb-3 font-medium">Top Picks</p>
+        <h2 className="text-white text-3xl md:text-5xl font-extrabold tracking-widest uppercase">
           Trending Styles
         </h2>
         <div className="flex items-center justify-center mt-5">
-          <div className="w-2 h-2 bg-[#cf814d] rotate-45"></div>
-          <div className="h-[2px] w-28 sm:w-36 md:w-44 bg-[#cf814d]"></div>
-          <div className="w-2 h-2 bg-[#cf814d] rotate-45"></div>
+          <div className="h-[1px] w-16 bg-[#cf814d]/40" />
+          <GiScissors className="text-[#cf814d] mx-3" size={18} />
+          <div className="h-[1px] w-16 bg-[#cf814d]/40" />
         </div>
+        <p className="text-gray-500 mt-4 text-xs tracking-widest uppercase">Find your perfect look</p>
       </div>
 
-      <div className="px-4">
-        <Swiper
-          modules={[Navigation]}
-          loop={true}
-          navigation={true}
-          centeredSlides={true}
-          spaceBetween={20}
-          breakpoints={{
-            0: {
-              slidesPerView: 1.2,
-            },
-            640: {
-              slidesPerView: 2,
-            },
-            768: {
-              slidesPerView: 3,
-            },
-            1024: {
-              slidesPerView: 4,
-            },
-          }}
-          className="!px-2"
-        >
-          {styles.map((style) => (
-            <SwiperSlide key={style.id}>
-              {({ isActive }) => (
-                <div
-                  className={`relative transition-all duration-300 rounded-2xl ${isActive ? 'scale-105 z-10' : 'scale-95 opacity-80'
-                    }`}
-                >
-                  <img
-                    src={style.img}
-                    alt={style.name}
-                    className="rounded-2xl object-cover w-full h-[300px] sm:h-[350px] md:h-[400px]"
-                  />
-                  <div className="absolute bottom-6 w-full text-center text-white font-bold tracking-widest">
-                    <div className="text-3xl sm:text-4xl md:text-5xl text-[#cf814d]">
-                      #{style.id}
-                    </div>
-                    <div className="text-lg sm:text-xl">{style.name}</div>
-                  </div>
+      <Swiper
+        modules={[Navigation, EffectCoverflow, Autoplay]}
+        effect="coverflow"
+        grabCursor={true}
+        centeredSlides={true}
+        loop={true}
+        autoplay={{ delay: 2500, disableOnInteraction: false }}
+        navigation={true}
+        coverflowEffect={{
+          rotate: 0,
+          stretch: 0,
+          depth: 120,
+          modifier: 2.5,
+          slideShadows: false,
+        }}
+        breakpoints={{
+          0:    { slidesPerView: 1.2 },
+          640:  { slidesPerView: 2 },
+          768:  { slidesPerView: 2.5 },
+          1024: { slidesPerView: 3.5 },
+        }}
+        className="trending-swiper"
+      >
+        {styles.map((style) => (
+          <SwiperSlide key={style.id}>
+            {({ isActive }) => (
+              <div className={`trending-card ${isActive ? 'active' : ''}`}>
+                <img src={style.img} alt={style.name} className="trending-img" />
+                <div className="trending-overlay">
+                  <span className="trending-number">#{style.id}</span>
+                  <span className="trending-name">{style.name}</span>
                 </div>
-              )}
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
+              </div>
+            )}
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </section>
   );
 };

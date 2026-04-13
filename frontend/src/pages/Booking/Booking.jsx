@@ -1,6 +1,7 @@
 import booking_img from '../../assets/book_img.jpg';
 import axios from "axios";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DotLoader } from "react-spinners";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -8,6 +9,8 @@ import team1 from '../../assets/team1.jpg';
 import team2 from '../../assets/team2.jpg';
 import team3 from '../../assets/team3.jpg';
 import team4 from '../../assets/team4.jpg';
+import { GiScissors } from 'react-icons/gi';
+import { FiCheck, FiCheckCircle, FiCalendar, FiClock, FiUser, FiMail, FiPhone, FiMessageSquare, FiAlertCircle } from 'react-icons/fi';
 
 const services = {
   Haircuts: ['Regular Haircut', 'Scissors Haircut', 'Kids Haircut'],
@@ -17,10 +20,10 @@ const services = {
 };
 
 const staff = [
-  { name: 'Steven', img: team1 },
-  { name: 'Huey', img: team2 },
-  { name: 'Harry', img: team3 },
-  { name: 'Axe', img: team4 },
+  { name: 'Steven', role: 'Master Barber', img: team1 },
+  { name: 'Huey', role: 'Senior Stylist', img: team2 },
+  { name: 'Harry', role: 'Fade Specialist', img: team3 },
+  { name: 'Axe', role: 'Style Artist', img: team4 },
 ];
 
 const timeSlots = [
@@ -30,24 +33,49 @@ const timeSlots = [
 ];
 
 const Booking = () => {
+  const navigate = useNavigate();
   const [selectedServices, setSelectedServices] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState('Steven');
   const [selectedTime, setSelectedTime] = useState('8:00 AM');
   const [selectedDate, setSelectedDate] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
-  });
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
   const [showPopup, setShowPopup] = useState(false);
+  const [bookingError, setBookingError] = useState("");
+
+  const [userLoading, setUserLoading] = useState(true);
+
+  // Login check + auto-fill user info
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+      return;
+    }
+    const fetchUser = async () => {
+      try {
+        const url = import.meta.env.VITE_BACKEND_URL;
+        const res = await axios.get(`${url}/users/userInfo`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const u = res.data.user;
+        setFormData((prev) => ({
+          ...prev,
+          name: u.name || "",
+          email: u.email || "",
+        }));
+      } catch (_) {
+        navigate("/");
+      } finally {
+        setUserLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
 
   const handleServiceChange = (service) => {
     setSelectedServices((prev) =>
-      prev.includes(service)
-        ? prev.filter((s) => s !== service)
-        : [...prev, service]
+      prev.includes(service) ? prev.filter((s) => s !== service) : [...prev, service]
     );
   };
 
@@ -56,245 +84,263 @@ const Booking = () => {
     const url = import.meta.env.VITE_BACKEND_URL;
     setLoading(true);
     try {
-      const bookingData = {
-        services: selectedServices,
-        staff: selectedStaff,
-        date: selectedDate,
-        time: selectedTime,
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        message: formData.message,
-      };
-
-      const res = await axios.post(`${url}/bookings/createBookings`, bookingData);
+      await axios.post(`${url}/bookings/createBookings`, {
+        services: selectedServices, staff: selectedStaff,
+        date: selectedDate, time: selectedTime, ...formData,
+      });
       setShowPopup(true);
-      setTimeout(() => setShowPopup(false), 3000);
-
-      setSelectedServices([]);
-      setSelectedDate(null);
-      setSelectedTime("8:00 AM");
-      setSelectedStaff("Steven");
-      setFormData({ name: "", email: "", phone: "", message: "" })
-    } catch (err) {
-      alert(err.response?.data?.message || "Booking failed");
-    }
-    finally {
       setTimeout(() => {
-        setLoading(false);
-      }, 5000);
+        setShowPopup(false);
+        navigate("/userProfile");
+      }, 2500);
+      setSelectedServices([]); setSelectedDate(null);
+      setSelectedTime("8:00 AM"); setSelectedStaff("Steven");
+      setFormData((prev) => ({ ...prev, phone: "", message: "" }));
+    } catch (err) {
+      setBookingError(err.response?.data?.message || "Booking failed. Please try again.");
+    } finally {
+      setTimeout(() => setLoading(false), 5000);
     }
   };
 
-  const isFormValid = () => {
-    return (
-      formData.name.trim() !== "" &&
-      formData.email.trim() !== "" &&
-      formData.phone.trim() !== "" &&
-      selectedServices.length > 0 &&
-      selectedDate !== null &&
-      selectedTime.trim() !== "" &&
-      selectedStaff.trim() !== ""
-    );
-  };
+  const isFormValid = () =>
+    formData.name.trim() && formData.email.trim() && formData.phone.trim() &&
+    selectedServices.length > 0 && selectedDate && selectedTime && selectedStaff;
+
+  const sectionHeader = (title, subtitle) => (
+    <div className="text-center mb-10">
+      <p className="text-[#cf814d] text-xs tracking-[0.4em] uppercase mb-2 font-medium">{subtitle}</p>
+      <h2 className="text-2xl md:text-3xl font-extrabold text-white uppercase tracking-widest">{title}</h2>
+      <div className="flex items-center justify-center mt-4">
+        <div className="h-[1px] w-12 bg-[#cf814d]/40" />
+        <GiScissors className="text-[#cf814d] mx-3" size={16} />
+        <div className="h-[1px] w-12 bg-[#cf814d]/40" />
+      </div>
+    </div>
+  );
+
+  if (userLoading) return (
+    <div className="min-h-screen bg-[#0a0a0a] pt-16 px-4 md:px-10">
+      <div className="h-[55vh] bg-[#111] animate-pulse rounded-b-2xl" />
+      <div className="max-w-6xl mx-auto py-16 space-y-6">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="bg-[#111] border border-white/5 rounded-2xl p-6 space-y-4 animate-pulse">
+            <div className="h-5 w-40 bg-[#1a1a1a] rounded" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[...Array(4)].map((_, j) => <div key={j} className="h-24 bg-[#1a1a1a] rounded-xl" />)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <>
+      {/* Success Popup */}
       {showPopup && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm">
-          <div className="relative bg-gradient-to-br from-[#111] to-[#1c1c1c] p-8 rounded-2xl shadow-2xl border border-[#cf814d]/40 text-center animate-fadeIn w-[90%] sm:w-[400px]">
-
-            {/* ✅ Success Icon */}
-            <div className="mx-auto flex items-center justify-center w-16 h-16 rounded-full bg-[#cf814d] text-black mb-4 animate-bounce">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-10 w-10"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/60 backdrop-blur-sm">
+          <div className="bg-[#111] p-8 rounded-2xl shadow-2xl border border-[#cf814d]/30 text-center w-[90%] sm:w-96">
+            <div className="w-14 h-14 rounded-full bg-[#cf814d] flex items-center justify-center mx-auto mb-4">
+              <FiCheckCircle size={28} className="text-black" />
             </div>
-
-            {/* ✅ Title */}
-            <h3 className="text-2xl font-bold text-[#cf814d] mb-2">Booking Confirmed!</h3>
-            <p className="text-gray-300 mb-6">
-              Thank you <span className="text-white font-semibold">{formData.name || "Guest"}</span>,
-              your appointment has been booked successfully 🎉
+            <h3 className="text-xl font-bold text-white mb-1">Booking Confirmed!</h3>
+            <p className="text-gray-400 text-sm mb-5">
+              Thank you <span className="text-white font-semibold">{formData.name || "Guest"}</span>, your appointment has been booked successfully!
             </p>
-
-            {/* ✅ Close button (optional, auto-close to rahega) */}
-            <button
-              onClick={() => setShowPopup(false)}
-              className="px-6 py-2 bg-[#cf814d] text-black rounded-lg font-semibold hover:shadow-[0_0_15px_#cf814d] transition-all duration-300"
-            >
+            <button onClick={() => setShowPopup(false)}
+              className="px-6 py-2 bg-[#cf814d] text-black rounded-xl font-semibold text-sm hover:bg-[#e6a45f] transition-all cursor-pointer">
               Close
             </button>
           </div>
         </div>
       )}
 
-
-      <section className="relative w-full min-h-120 flex flex-col justify-start items-center overflow-hidden pt-40 md:pt-40">
-        <div
-          className="absolute top-0 left-0 w-full h-full -z-10 bg-cover bg-center"
-          style={{ backgroundImage: `url(${booking_img})` }}
-        >
-          <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-black to-transparent pointer-events-none" />
+      {/* Hero */}
+      <section className="relative w-full h-[55vh] min-h-[320px] flex flex-col justify-end items-center overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${booking_img})` }}>
+          <div className="absolute inset-0 bg-black/65" />
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black to-transparent" />
         </div>
-        <div className="text-center text-white z-10 px-4">
-          <h2 className="text-3xl md:text-5xl font-bold tracking-[0.25em] uppercase">
-            Booking
-          </h2>
-          <div className="flex items-center justify-center mt-4">
-            <div className="w-2 md:w-3 h-2 md:h-3 bg-[#cf814d] rotate-45" />
-            <div className="h-[2px] w-24 sm:w-40 md:w-52 bg-[#cf814d]" />
-            <div className="w-2 md:w-3 h-2 md:h-3 bg-[#cf814d] rotate-45" />
+        <div className="relative z-10 text-center pb-12 px-4">
+          <p className="text-[#cf814d] text-xs tracking-[0.4em] uppercase mb-3 font-medium">Reserve Your Spot</p>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-white tracking-widest uppercase mb-3">
+            Book Appointment
+          </h1>
+          <div className="flex items-center justify-center gap-2 text-gray-300 text-xs sm:text-sm">
+            <span>Home</span>
+            <span className="text-[#cf814d]">/</span>
+            <span className="text-[#cf814d]">Booking</span>
           </div>
         </div>
       </section>
-      <section className="bg-black text-white py-14 px-6 lg:px-20">
-        <h2 className="text-xl uppercase tracking-[0.3em] mb-8 text-center">
-          Choose Services
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+
+      {/* Services */}
+      <section className="bg-[#0a0a0a] py-16 px-4 md:px-10">
+        {sectionHeader("Choose Services", "Step 1")}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 max-w-6xl mx-auto">
           {Object.entries(services).map(([category, items]) => (
-            <div key={category} className="bg-[#111] p-5 rounded-xl shadow-md border border-[#2a2a2a] hover:border-[#cf814d] transition-all">
-              <h3 className="uppercase tracking-widest text-sm bg-[#7a4a25] px-3 py-1 inline-block rounded mb-4">
-                {category}
-              </h3>
-              <ul className="space-y-3">
+            <div key={category} className="bg-[#111] border border-white/5 hover:border-[#cf814d]/30 rounded-2xl p-3 sm:p-5 transition-all duration-300">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-1.5 h-4 bg-[#cf814d] rounded-full" />
+                <h3 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-white">{category}</h3>
+              </div>
+              <ul className="space-y-2">
                 {items.map((service) => (
-                  <li key={service} className="flex items-center gap-3">
-                    <input type="checkbox"
-                      checked={selectedServices.includes(service)}
-                      onChange={() => handleServiceChange(service)}
-                      className="accent-[#cf814d] w-4 h-4" />
-                    <span className="text-sm">{service}</span>
+                  <li key={service}
+                    onClick={() => handleServiceChange(service)}
+                    className="flex items-center gap-2 cursor-pointer group"
+                  >
+                    <div className={`w-4 h-4 rounded flex items-center justify-center flex-shrink-0 border transition-all duration-200
+                      ${selectedServices.includes(service)
+                        ? 'bg-[#cf814d] border-[#cf814d]'
+                        : 'border-white/20 group-hover:border-[#cf814d]/50'}`}>
+                      {selectedServices.includes(service) && <FiCheck size={10} className="text-black" />}
+                    </div>
+                    <span className={`text-xs sm:text-sm transition-colors duration-200 leading-tight ${selectedServices.includes(service) ? 'text-white' : 'text-gray-400 group-hover:text-gray-200'}`}>
+                      {service}
+                    </span>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
-        <h2 className="text-xl uppercase tracking-[0.3em] mb-6 text-center">Choose Staff</h2>
-        <div className="flex gap-6 mb-14 flex-wrap justify-center">
-          {staff.map(({ name, img }) => (
-            <div
-              key={name}
-              onClick={() => setSelectedStaff(name)}
-              className={`cursor-pointer text-center transition-all duration-300 w-28 p-2 rounded-xl shadow-md 
+
+        {/* Selected Services Summary */}
+        {selectedServices.length > 0 && (
+          <div className="max-w-6xl mx-auto mt-5 bg-[#cf814d]/10 border border-[#cf814d]/20 rounded-xl px-5 py-3 flex flex-wrap gap-2 items-center">
+            <span className="text-xs text-[#cf814d] font-semibold uppercase tracking-wider mr-1">Selected:</span>
+            {selectedServices.map((s) => (
+              <span key={s} className="text-xs bg-[#cf814d] text-black font-semibold px-2.5 py-1 rounded-full">{s}</span>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Staff */}
+      <section className="bg-[#0a0a0a] py-16 px-4 md:px-10 border-t border-white/5">
+        {sectionHeader("Choose Staff", "Step 2")}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto">
+          {staff.map(({ name, role, img }) => (
+            <div key={name} onClick={() => setSelectedStaff(name)}
+              className={`cursor-pointer text-center rounded-2xl overflow-hidden transition-all duration-300
                 ${selectedStaff === name
-                  ? 'border-4 border-[#cf814d] bg-[#1c1c1c]'
-                  : 'border border-[#333] hover:border-[#cf814d] opacity-80'
-                }`}
-            >
-              <img src={img} alt={name} className="w-full h-28 object-cover mb-2 rounded-lg hover:scale-105 transition-transform" />
-              <p className="text-sm">{name}</p>
+                  ? 'ring-2 ring-[#cf814d] shadow-[0_0_20px_rgba(207,129,77,0.3)]'
+                  : 'border border-white/5 hover:border-[#cf814d]/40 opacity-70 hover:opacity-100'}`}>
+              <div className="h-32 sm:h-36 overflow-hidden">
+                <img src={img} alt={name} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+              </div>
+              <div className="bg-[#111] p-2 sm:p-3">
+                <p className="text-white text-sm font-semibold">{name}</p>
+                <p className="text-[#cf814d] text-xs mt-0.5">{role}</p>
+              </div>
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+      </section>
 
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-[#111] to-[#1c1c1c] border border-[#2a2a2a] shadow-lg">
-            <h2 className="text-xl font-semibold uppercase tracking-widest mb-4 text-[#cf814d]">
-              Select Date
-            </h2>
-            <div className="relative">
-              <DatePicker
-                selected={selectedDate}
-                onChange={(date) => setSelectedDate(date)}
-                className="w-full bg-[#181818] border border-[#333] px-5 py-3 rounded-xl 
-                   text-white focus:outline-none focus:ring-2 focus:ring-[#cf814d] 
-                   placeholder-gray-500 transition-all duration-300"
-                placeholderText="Pick your date"
-                dateFormat="dd/MM/yyyy"
-                minDate={new Date()}
-              />
+      {/* Date & Time */}
+      <section className="bg-[#0a0a0a] py-16 px-4 md:px-10 border-t border-white/5">
+        {sectionHeader("Select Date & Time", "Step 3")}
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Date */}
+          <div className="bg-[#111] border border-white/5 rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <FiCalendar className="text-[#cf814d]" size={18} />
+              <h3 className="text-sm font-bold uppercase tracking-widest text-white">Pick a Date</h3>
             </div>
+            <DatePicker
+              selected={selectedDate}
+              onChange={(date) => setSelectedDate(date)}
+              className="!w-full bg-[#1a1a1a] border border-white/5 px-4 py-3 rounded-xl text-white text-sm focus:outline-none focus:border-[#cf814d]/50 placeholder-gray-600 transition-colors"
+              wrapperClassName="w-full"
+              placeholderText="Select your date"
+              dateFormat="dd/MM/yyyy"
+              minDate={new Date()}
+            />
           </div>
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-[#111] to-[#1c1c1c] border border-[#2a2a2a] shadow-lg">
-            <h2 className="text-xl font-semibold uppercase tracking-widest mb-4 text-[#cf814d]">
-              Select Time
-            </h2>
-            <div className="flex flex-wrap gap-3">
+
+          {/* Time */}
+          <div className="bg-[#111] border border-white/5 rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <FiClock className="text-[#cf814d]" size={18} />
+              <h3 className="text-sm font-bold uppercase tracking-widest text-white">Pick a Time</h3>
+            </div>
+            <div className="flex flex-wrap gap-2">
               {timeSlots.map((time) => (
-                <button
-                  key={time}
-                  onClick={() => setSelectedTime(time)}
-                  className={`px-5 py-2.5 rounded-xl border text-sm font-medium transition-all duration-300 shadow-sm
-            ${selectedTime === time
-                      ? 'bg-[#cf814d] text-black font-semibold border-[#cf814d] scale-105'
-                      : 'bg-[#181818] text-gray-300 border-[#333] hover:border-[#cf814d] hover:text-white hover:scale-105'
-                    }`}
-                >
+                <button key={time} onClick={() => setSelectedTime(time)}
+                  className={`px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 cursor-pointer
+                    ${selectedTime === time
+                      ? 'bg-[#cf814d] text-black font-bold'
+                      : 'bg-[#1a1a1a] text-gray-400 border border-white/5 hover:border-[#cf814d]/40 hover:text-white'}`}>
                   {time}
                 </button>
               ))}
             </div>
           </div>
         </div>
-
       </section>
-      <section className="bg-black text-white py-14 px-6 lg:px-20">
-        <h2 className="text-xl uppercase tracking-[0.3em] mb-10 flex items-center gap-3 justify-center">
-          Your Details <span className="h-[1px] w-14 bg-[#cf814d]"></span>
-        </h2>
 
-        <form onSubmit={handleSubmit}>
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
-            <div className="flex flex-col space-y-6">
-              <input
-                type="text"
-                placeholder="Your Name"
-                name='name'
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="bg-[#111] border border-[#333] px-5 py-3 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#cf814d]"
-              />
-              <input
-                type="email"
-                placeholder="Your Email"
-                name="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="bg-[#111] border border-[#333] px-5 py-3 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#cf814d]"
-              />
-              <input
-                type="tel"
-                placeholder="Your Phone"
-                name='phone'
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="bg-[#111] border border-[#333] px-5 py-3 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#cf814d]"
-              />
-            </div>
-            <textarea
-              placeholder="Your Message"
-              rows="6"
-              name='message'
-              value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              className="bg-[#111] border border-[#333] px-5 py-3 rounded-lg placeholder-gray-400 focus:outline-none focus:border-[#cf814d]"
-            ></textarea>
-          </div>
-          <div className="text-center flex items-center justify-center">
-            <button
-              type="submit"
-              disabled={!isFormValid()}
-              className={`mt-10 font-semibold tracking-widest px-10 py-3 uppercase rounded-lg transition-all duration-300 
-    ${!isFormValid() || loading
-                  ? "bg-gray-600 text-gray-300 cursor-not-allowed"   // disabled style
-                  : "bg-[#cf814d] text-white hover:shadow-[0_0_25px_#cf814d] cursor-pointer"}`}
-            >
-              {loading ? <DotLoader size={20} color="#fff" /> :
-                "Submit Booking"}
-            </button>
-          </div>
-        </form>
+      {/* Personal Details */}
+      <section className="bg-[#0a0a0a] py-16 px-4 md:px-10 border-t border-white/5">
+        {sectionHeader("Your Details", "Step 4")}
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-[#111] border border-white/5 rounded-2xl p-6 sm:p-8">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="flex items-center gap-1.5 text-xs text-gray-500 mb-1.5 uppercase tracking-wider">
+                    <FiUser size={11} /> Full Name
+                  </label>
+                  <input type="text" placeholder="John Doe" value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-[#1a1a1a] border border-white/5 focus:border-[#cf814d]/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors" />
+                </div>
+                <div>
+                  <label className="flex items-center gap-1.5 text-xs text-gray-500 mb-1.5 uppercase tracking-wider">
+                    <FiMail size={11} /> Email Address
+                  </label>
+                  <input type="email" placeholder="john@example.com" value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-[#1a1a1a] border border-white/5 focus:border-[#cf814d]/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors" />
+                </div>
+              </div>
+              <div>
+                <label className="flex items-center gap-1.5 text-xs text-gray-500 mb-1.5 uppercase tracking-wider">
+                  <FiPhone size={11} /> Phone Number
+                </label>
+                <input type="tel" placeholder="+1 000 0000" value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl bg-[#1a1a1a] border border-white/5 focus:border-[#cf814d]/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors" />
+              </div>
+              <div>
+                <label className="flex items-center gap-1.5 text-xs text-gray-500 mb-1.5 uppercase tracking-wider">
+                  <FiMessageSquare size={11} /> Message (Optional)
+                </label>
+                <textarea placeholder="Any special requests..." rows="4" value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl bg-[#1a1a1a] border border-white/5 focus:border-[#cf814d]/50 focus:outline-none text-white text-sm placeholder-gray-600 transition-colors resize-none" />
+              </div>
 
+              {bookingError && (
+                <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+                  <FiAlertCircle size={14} className="text-red-400 flex-shrink-0" />
+                  <p className="text-red-400 text-xs">{bookingError}</p>
+                </div>
+              )}
+              <div className="pt-2 flex justify-center">
+                <button type="submit" disabled={!isFormValid() || loading}
+                  className={`flex items-center gap-2 px-10 py-3 rounded-xl font-bold text-sm tracking-widest uppercase transition-all duration-300
+                    ${isFormValid() && !loading
+                      ? 'bg-[#cf814d] text-black hover:bg-[#e6a45f] hover:shadow-[0_0_25px_rgba(207,129,77,0.4)] cursor-pointer'
+                      : 'bg-white/5 text-gray-500 cursor-not-allowed border border-white/5'}`}>
+                  {loading ? <DotLoader size={18} color="#000" /> : 'Confirm Booking'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </section>
     </>
   );

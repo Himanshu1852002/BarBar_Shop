@@ -16,6 +16,7 @@ import Footer from './components/Footer/Footer'
 import AuthModal from './components/Login/AuthModal'
 import UserProfilePage from './pages/ProfilePage/UserProfilePage';
 import PageNotFound from './pages/404/PageNotFound';
+import BackToTop from './components/BackToTop/BackToTop';
 import Blog from './pages/Blog/Blog';
 import AdminDashboard from './components/Admin/AdminDashboard/AdminDashboard';
 import AdminAuthModal from './components/Admin/AdminLogin/AdminAuthModal';
@@ -45,22 +46,9 @@ function App() {
     return () => clearTimeout(timer);
   }, [location]);
 
-  const isNotFoundPage =
-    location.pathname !== '/' &&
-    ![
-      '/services',
-      '/aboutus',
-      '/team',
-      '/contactus',
-      '/testimonials',
-      '/booking',
-      '/single-service',
-      '/userProfile',
-      '/blog',
-    ].includes(location.pathname) &&
-    !location.pathname.startsWith("/admin");
-
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const knownRoutes = ['/', '/services', '/aboutus', '/team', '/contactus', '/testimonials', '/booking', '/single-service', '/userProfile', '/blog'];
+  const isNotFoundPage = !knownRoutes.includes(location.pathname) && !isAdminRoute;
 
   return (
     <>
@@ -68,7 +56,7 @@ function App() {
         <Loader />
       ) : (
         <>
-          {!isNotFoundPage && !isAdminRoute && (
+          {!isAdminRoute && (
             <Navbar onLoginClick={() => setShowAuthModal(true)} />
           )}
 
@@ -108,7 +96,9 @@ function App() {
             </Route>
           </Routes>
 
-          {!isNotFoundPage && !isAdminRoute && <Footer />}
+          {!isAdminRoute && <Footer />}
+
+          <BackToTop />
 
           {showAuthModal && (
             <AuthModal

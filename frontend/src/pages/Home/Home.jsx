@@ -4,6 +4,8 @@ import TrendingStyles from '../../components/LeadingStyles/TrendingStyles'
 import CenterSection from '../../components/CenterSection/CenterSection'
 import Services from '../../components/Servicess/Services'
 import AddressTime from '../../components/Address & Time/AddressTime'
+import TeamPreview from '../../components/TeamPreview/TeamPreview'
+import TestimonialsPreview from '../../components/TestimonialsPreview/TestimonialsPreview'
 
 const Home = ({ onLoginClick }) => {
   return (
@@ -12,8 +14,10 @@ const Home = ({ onLoginClick }) => {
         <Hero onLoginClick={onLoginClick} />
         <Hero_Bottom />
         <TrendingStyles />
-        <CenterSection  onLoginClick={onLoginClick}/>
+        <CenterSection onLoginClick={onLoginClick} />
         <Services />
+        <TeamPreview />
+        <TestimonialsPreview />
         <AddressTime />
       </div>
     </>

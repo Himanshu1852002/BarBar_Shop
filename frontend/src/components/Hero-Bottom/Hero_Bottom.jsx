@@ -1,11 +1,23 @@
-const Hero_Bottom = () => {
-    return (
-       <section className='bg-black text-white'>
-         <div className='flex justify-center items-center py-10 px-10 md:px-20 lg:px-45'>
-            <p className='text-4xl leading-10 font-sans text-center'>"Established with a passion for the art of barbering, we take great pride in our craft and strive to create an atmosphere that feels like home. From the moment you walk through our doors, you'll be greeted by friendly smiles and a warm ambiance that instantly puts you at ease."</p>
-        </div>
-       </section>
-    )
-}
+const stats = [
+  { number: "500+", label: "Happy Clients" },
+  { number: "10+", label: "Expert Barbers" },
+  { number: "15+", label: "Years Experience" },
+  { number: "20+", label: "Styles Offered" },
+];
 
-export default Hero_Bottom
+const Hero_Bottom = () => {
+  return (
+    <section className="bg-[#111] border-y border-white/5">
+      <div className="grid grid-cols-2 md:grid-cols-4">
+        {stats.map(({ number, label }, i) => (
+          <div key={label} className={`flex flex-col items-center justify-center py-8 px-3 gap-1 ${i < 3 ? 'border-r border-white/5' : ''}`}>
+            <span className="text-3xl sm:text-4xl font-extrabold text-[#cf814d] tracking-widest">{number}</span>
+            <span className="text-xs uppercase tracking-widest text-gray-500 text-center mt-1">{label}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+export default Hero_Bottom;
