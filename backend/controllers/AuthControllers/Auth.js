@@ -10,13 +10,23 @@ import multer from "multer";
 // 1. multer config for image upload
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, "uploads/"); // uploads folder me save hoga
+        cb(null, "uploads/");
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + "-" + file.originalname);
     },
 });
-export const upload = multer({ storage: storage });
+
+const fileFilter = (req, file, cb) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+    } else {
+        cb(new Error("Only JPEG, PNG, and WEBP images are allowed"), false);
+    }
+};
+
+export const upload = multer({ storage, fileFilter, limits: { fileSize: 2 * 1024 * 1024 } });
 
 const userRegister = async (req, res) => {
 
@@ -24,7 +34,6 @@ const userRegister = async (req, res) => {
         const { name, email, password } = req.body;
         const exists = await User.findOne({ email });
 
-        console.log(exists)
         if (exists) {
             return res.json({ success: false, message: 'User already exists' });
         }
@@ -157,7 +166,12 @@ const editUserInfo = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    let updateData = { ...req.body };
+    const allowedFields = ["name", "phone"];
+    let updateData = {};
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) updateData[field] = req.body[field];
+    });
+
     if (req.file) {
       updateData.image = req.file.filename;
     }

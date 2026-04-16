@@ -173,6 +173,6 @@ userRouter.put("/update-profile", authMiddleware, upload.single("image"), editUs
  *               items:
  *                 $ref: '#/components/schemas/User'
  */
-userRouter.get("/getAllUsers", getAllUsers);
+userRouter.get("/getAllUsers", authMiddleware, getAllUsers);
 
 export default userRouter;

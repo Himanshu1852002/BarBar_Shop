@@ -3,13 +3,13 @@ import mongoose from "mongoose";
 const bookingSchema = new mongoose.Schema({
   services: { type: [String], required: true }, 
   staff: { type: String, required: true },
-  date: { type: String, required: true },
+  date: { type: Date, required: true },
   time: { type: String, required: true },
   name: { type: String, required: true, trim: true },
   email: { type: String, required: true },
   phone: { type: String, required: true },
-  message: { type: String, default: "", },
-  status: { type: String, enum: ["pending", "confirmed", "canceled", "Rescheduled"], default: "pending" }
+  message: { type: String, default: "" },
+  status: { type: String, enum: ["pending", "confirmed", "canceled", "rescheduled"], default: "pending" }
 }, { timestamps: true });
 
 const Booking = mongoose.model("Booking", bookingSchema);

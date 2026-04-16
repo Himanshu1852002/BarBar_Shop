@@ -2,8 +2,6 @@ import Admin from "../../models/Admin/AdminModal/AdminModal.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
-const JWT_SECRET = process.env.JWT_SECRET || "mysecretkey";
-
 const adminRegister = async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
@@ -30,7 +28,7 @@ const adminRegister = async (req, res) => {
 
     const token = jwt.sign(
       { id: newAdmin._id, email: newAdmin.email },
-      JWT_SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
@@ -70,7 +68,7 @@ const adminLogin = async (req, res) => {
 
     const token = jwt.sign(
       { id: existingAdmin._id, email: existingAdmin.email },
-      JWT_SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 

@@ -4,7 +4,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { FaUser, FaEnvelope, FaLock, FaPhone } from "react-icons/fa";
 import { DotLoader } from "react-spinners";
 
-const AdminAuthModal = ({ onSuccess }) => {
+const AdminAuthModal = ({ onSuccess, onClose }) => {
     const [isLogin, setIsLogin] = useState(true);
     const [formData, setFormData] = useState({
         name: "",
@@ -78,6 +78,7 @@ const AdminAuthModal = ({ onSuccess }) => {
             <div className="bg-gradient-to-br from-[#1e1e1e] to-[#2c2c2c] w-[90%] max-w-md rounded-2xl shadow-2xl p-8 relative animate-fadeIn border border-[#cf814d]/40">
                 <AiOutlineClose
                     className="absolute top-4 right-4 text-gray-400 hover:text-white cursor-pointer text-2xl"
+                    onClick={onClose}
                 />
 
                 <h2 className="text-3xl font-bold text-center text-[#cf814d] mb-6 tracking-wide">

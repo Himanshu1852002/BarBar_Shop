@@ -1,6 +1,7 @@
 import express from 'express';
 import { addEmployee, deleteEmployee, editEmployee, getEmployees } from '../controllers/Admin/EmployeeController.js';
 import { upload } from '../controllers/Admin/EmployeeController.js';
+import adminMiddleware from '../middleware/adminMiddleware.js';
 
 const employeeRouter = express.Router();
 
@@ -60,7 +61,7 @@ const employeeRouter = express.Router();
  *       400:
  *         description: Bad request - Validation error or employee already exists
  */
-employeeRouter.post('/addEmployee', upload.single('image'), addEmployee);
+employeeRouter.post('/addEmployee', adminMiddleware, upload.single('image'), addEmployee);
 
 /**
  * @swagger
@@ -96,7 +97,7 @@ employeeRouter.post('/addEmployee', upload.single('image'), addEmployee);
  *       500:
  *         description: Internal server error
  */
-employeeRouter.get('/getEmployees', getEmployees);
+employeeRouter.get('/getEmployees', adminMiddleware, getEmployees);
 
 /**
  * @swagger
@@ -161,7 +162,7 @@ employeeRouter.get('/getEmployees', getEmployees);
  *       400:
  *         description: Bad request - Validation error
  */
-employeeRouter.put('/editEmployee/:id', upload.single('image'), editEmployee);
+employeeRouter.put('/editEmployee/:id', adminMiddleware, upload.single('image'), editEmployee);
 
 /**
  * @swagger
@@ -192,6 +193,6 @@ employeeRouter.put('/editEmployee/:id', upload.single('image'), editEmployee);
  *       500:
  *         description: Internal server error
  */
-employeeRouter.delete('/deleteEmployee/:id', deleteEmployee);
+employeeRouter.delete('/deleteEmployee/:id', adminMiddleware, deleteEmployee);
 
 export default employeeRouter;

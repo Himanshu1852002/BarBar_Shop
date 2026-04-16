@@ -1,5 +1,6 @@
 import express from 'express';
 import { createBookings, getBookings, cancelBooking, rescheduledBooking, deleteBooking, getDateWiseBookings, getRecentBookings } from '../controllers/BookiingControllers/BookingService.js';
+import adminMiddleware from '../middleware/adminMiddleware.js';
 
 const bookingRouter = express.Router();
 
@@ -78,7 +79,7 @@ bookingRouter.post('/createBookings', createBookings);
  *               items:
  *                 $ref: '#/components/schemas/Booking'
  */
-bookingRouter.get('/getBookings', getBookings);
+bookingRouter.get('/getBookings', adminMiddleware, getBookings);
 
 /**
  * @swagger
@@ -99,7 +100,7 @@ bookingRouter.get('/getBookings', getBookings);
  *       404:
  *         description: Booking not found
  */
-bookingRouter.delete('/cancelBooking/:id', cancelBooking);
+bookingRouter.delete('/cancelBooking/:id', adminMiddleware, cancelBooking);
 
 /**
  * @swagger
@@ -134,7 +135,7 @@ bookingRouter.delete('/cancelBooking/:id', cancelBooking);
  *       404:
  *         description: Booking not found
  */
-bookingRouter.put('/rescheduledBooking/:id', rescheduledBooking);
+bookingRouter.put('/rescheduledBooking/:id', adminMiddleware, rescheduledBooking);
 
 /**
  * @swagger
@@ -155,7 +156,7 @@ bookingRouter.put('/rescheduledBooking/:id', rescheduledBooking);
  *       404:
  *         description: Booking not found
  */
-bookingRouter.delete('/deleteBooking/:id', deleteBooking);
+bookingRouter.delete('/deleteBooking/:id', adminMiddleware, deleteBooking);
 
 /**
  * @swagger
@@ -188,7 +189,7 @@ bookingRouter.delete('/deleteBooking/:id', deleteBooking);
  *                 items:
  *                   $ref: '#/components/schemas/Booking'
  */
-bookingRouter.get('/getDateWiseBookings', getDateWiseBookings);
+bookingRouter.get('/getDateWiseBookings', adminMiddleware, getDateWiseBookings);
 
 /**
  * @swagger
@@ -213,6 +214,6 @@ bookingRouter.get('/getDateWiseBookings', getDateWiseBookings);
  *               items:
  *                 $ref: '#/components/schemas/Booking'
  */
-bookingRouter.get('/getRecentBookings', getRecentBookings);
+bookingRouter.get('/getRecentBookings', adminMiddleware, getRecentBookings);
 
 export default bookingRouter;

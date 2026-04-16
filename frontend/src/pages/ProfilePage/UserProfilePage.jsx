@@ -62,7 +62,10 @@ const UserProfilePage = () => {
     const getBookingData = async () => {
       try {
         const url = import.meta.env.VITE_BACKEND_URL;
-        const res = await axios.get(`${url}/bookings/getBookings`);
+        const token = localStorage.getItem("token");
+        const res = await axios.get(`${url}/bookings/getBookings`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const userBookings = res.data.bookings.filter(
           (b) => b.email?.toLowerCase() === user.email?.toLowerCase()
         );
@@ -76,8 +79,11 @@ const UserProfilePage = () => {
   const cancelBooking = async () => {
     try {
       const url = import.meta.env.VITE_BACKEND_URL;
-      await axios.delete(`${url}/bookings/cancelBooking/${selectedBookingId}`);
-      setBooking((prev) => prev.map((b) => b._id === selectedBookingId ? { ...b, status: "Cancelled" } : b));
+      const token = localStorage.getItem("token");
+      await axios.delete(`${url}/bookings/cancelBooking/${selectedBookingId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setBooking((prev) => prev.map((b) => b._id === selectedBookingId ? { ...b, status: "canceled" } : b));
     } catch (error) { console.error("Error cancelling booking:", error); }
     finally { setShowCancelPopup(false); setSelectedBookingId(null); }
   };
@@ -85,8 +91,11 @@ const UserProfilePage = () => {
   const rescheduleBooking = async () => {
     try {
       const url = import.meta.env.VITE_BACKEND_URL;
-      await axios.put(`${url}/bookings/rescheduledBooking/${bookingIdReseduled}`, { date: newDate, time: newTime, status: "Rescheduled" });
-      setBooking((prev) => prev.map((b) => b._id === bookingIdReseduled ? { ...b, date: newDate, time: newTime, status: "Rescheduled" } : b));
+      const token = localStorage.getItem("token");
+      await axios.put(`${url}/bookings/rescheduledBooking/${bookingIdReseduled}`, { date: newDate, time: newTime }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setBooking((prev) => prev.map((b) => b._id === bookingIdReseduled ? { ...b, date: newDate, time: newTime, status: "rescheduled" } : b));
       setShowReschedulePopup(false); setBookingIdReseduled(null); setNewDate(""); setNewTime("");
     } catch (error) { console.error("Error rescheduling booking:", error); }
   };
@@ -342,7 +351,7 @@ const UserProfilePage = () => {
                       </div>
                       <p className="text-white font-semibold mb-1">No Bookings Found</p>
                       <p className="text-gray-500 text-sm mb-5">You haven't booked any appointments yet.</p>
-                      <button onClick={() => window.location.href = '/booking'}
+                      <button onClick={() => navigate('/booking')}
                         className="px-6 py-2.5 rounded-xl bg-[#cf814d] text-black text-sm font-semibold hover:bg-[#e6a45f] transition-all cursor-pointer">
                         Book Now
                       </button>

@@ -1,5 +1,5 @@
 import './App.css'
-import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
+import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { useEffect, useState } from "react";
 
 import Home from './pages/Home/Home'
@@ -29,26 +29,23 @@ import Service from './pages/Admin/Services/Service';
 
 function App() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
-  // ✅ Sirf token check karna
   const checkAdminAuth = () => {
     const token = localStorage.getItem("adminToken");
-    setIsAdminAuthenticated(!!token); 
+    setIsAdminAuthenticated(!!token);
   };
 
   useEffect(() => {
-    setLoading(true);
     checkAdminAuth();
     const timer = setTimeout(() => setLoading(false), 1000);
     return () => clearTimeout(timer);
-  }, [location]);
+  }, []);
 
   const isAdminRoute = location.pathname.startsWith("/admin");
-  const knownRoutes = ['/', '/services', '/aboutus', '/team', '/contactus', '/testimonials', '/booking', '/single-service', '/userProfile', '/blog'];
-  const isNotFoundPage = !knownRoutes.includes(location.pathname) && !isAdminRoute;
 
   return (
     <>
@@ -71,29 +68,23 @@ function App() {
             <Route path='/single-service' element={<ServiceSingle />} />
             <Route path='/userProfile' element={<UserProfilePage />} />
             <Route path='/blog' element={<Blog />} />
-            <Route path='/*' element={<PageNotFound />} />
 
-            {/* ✅ Admin Routes */}
-            <Route
-              path="/admin/*"
-              element={
-                isAdminAuthenticated ? (
-                  <AdminDashboard />
-                ) : (
-                  <AdminAuthModal
-                    onSuccess={() => setIsAdminAuthenticated(true)}
-                  />
-                )
-              }
-            >
-              <Route index element={<Navigate to="dashboard" replace />} />
-              <Route path='dashboard' element={<Dashboard />} />
-              <Route path='bookingManagement' element={<BookingManagement />} />
-              <Route path='service' element={<Service/>}/>
-              <Route path='employeeManagement' element={<EmployeeManagement />} />
-              <Route path='customerManagement' element={<CustomerManagement />} />
-              <Route path='settings' element={<Settings />} />
-            </Route>
+            {/* Admin Routes */}
+            {isAdminAuthenticated ? (
+              <Route path="/admin/*" element={<AdminDashboard />}>
+                <Route index element={<Navigate to="dashboard" replace />} />
+                <Route path='dashboard' element={<Dashboard />} />
+                <Route path='bookingManagement' element={<BookingManagement />} />
+                <Route path='service' element={<Service />} />
+                <Route path='employeeManagement' element={<EmployeeManagement />} />
+                <Route path='customerManagement' element={<CustomerManagement />} />
+                <Route path='settings' element={<Settings />} />
+              </Route>
+            ) : (
+              <Route path="/admin/*" element={<AdminAuthModal onSuccess={() => setIsAdminAuthenticated(true)} onClose={() => navigate('/')} />} />
+            )}
+
+            <Route path='/*' element={<PageNotFound />} />
           </Routes>
 
           {!isAdminRoute && <Footer />}
@@ -103,7 +94,7 @@ function App() {
           {showAuthModal && (
             <AuthModal
               onClose={() => setShowAuthModal(false)}
-              onAuthSuccess={() => window.location.reload()}
+              onAuthSuccess={() => setShowAuthModal(false)}
             />
           )}
         </>
